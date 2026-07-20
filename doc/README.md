@@ -1,7 +1,7 @@
 # INDEX: HomeBus 文档索引
 
 > 最后更新: 2026-07-20
-> 文档总数: 2
+> 文档总数: 9
 
 本文档提供项目资产的分层索引，支持 agent 渐进式上下文加载。
 
@@ -9,11 +9,13 @@
 
 | 类别 | 路径 | 文档数 | 状态 |
 |------|------|--------|------|
-| 规格说明 | `doc/specs/` | 1 | 初始化中 |
+| 规格说明 | `doc/specs/` | 2 | homebus.md + config-paradigm.md |
 | 术语表 | `doc/glossary.md` | — | 固定文件 |
 | ADR | `doc/adr/` | 0 | 待创建 |
-| C4 模型 | `doc/c4/` | 0 | 待创建 |
-| 调研 | `doc/research/` | 0 | 待创建 |
+| C4 模型 | `doc/c4/` | 6 | 文字描述 ✅ |
+| PRD | `doc/prd/` | 1 | Draft |
+| Roadmap | `/ROADMAP.md` | — | v0.1 → v1.0 路线图 |
+| 调研 | `doc/research/` | 1 | Grocy CLI 资产分析 ✅ |
 | RFC | `doc/rfcs/` | 0 | 待创建 |
 
 ## Level 1: 类别索引
