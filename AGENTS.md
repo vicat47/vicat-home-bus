@@ -1,5 +1,8 @@
 # AGENTS.md — vicat-home-bus
 
+> **前置阅读**：AGENTS.md 覆盖"怎么做"（目录结构、工作流、核心约束）。
+> 设计背景和"为什么"见 [MEMORY.md](MEMORY.md)。
+
 ## 项目定位
 
 HomeBus 是一个**家庭服务总线**，作为 Beancount（复式记账）、Grocy（消耗品库存管理）、Homebox（耐用品资产管理）之间的单一写入入口与事务协调器。AI Agent 负责意图识别和物品分类，HomeBus 负责事件的持久化、分发、调谐与对账。
