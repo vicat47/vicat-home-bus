@@ -1,0 +1,16 @@
+name: vicat-home-bus
+version: 0.0.1
+description: APM project for vicat-home-bus
+author: vicat47
+# Which agent platforms to deploy to.
+# Resolution order: --target flag > this field > auto-detect from filesystem.
+# Accepted values: copilot, claude, cursor, opencode, codex, gemini, windsurf, all
+targets:
+  - opencode
+dependencies:
+  apm:
+    - git: https://gitea.nas.vicat.top:5001/ai-projects/home-vicat-skills.git
+      path: packages/documentation
+  mcp: []
+includes: auto
+scripts: {}

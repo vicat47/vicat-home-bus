@@ -1,0 +1,609 @@
+lockfile_version: '1'
+generated_at: '2026-07-20T09:47:29.918130+00:00'
+apm_version: 0.26.0
+dependencies:
+- repo_url: ai-projects/home-vicat-skills
+  name: vicat-documentation-skills
+  host: gitea.nas.vicat.top
+  port: 5001
+  resolved_commit: ecd2bfa737e6c4d28f482566472248763d414eb3
+  version: 0.1.0
+  virtual_path: packages/documentation
+  is_virtual: true
+  package_type: apm_package
+  deployed_files:
+  - .opencode/skills/doc-structure
+  - .opencode/skills/doc-structure/SKILL.md
+  - .opencode/skills/doc-structure/scripts/scan_docs.py
+  - .opencode/skills/doc-structure/templates/AGENTS__TEMPLATE.md
+  - .opencode/skills/doc-structure/templates/INDEX__TEMPLATE.md
+  - .opencode/skills/doc-structure/templates/README__TEMPLATE.md
+  - .opencode/skills/record-adr
+  - .opencode/skills/record-adr/SKILL.md
+  - .opencode/skills/record-adr/references/example-adr-kafka.md
+  - .opencode/skills/record-adr/templates/ADR.md
+  - .opencode/skills/record-adr/templates/KEY-DECISIONS.md
+  - .opencode/skills/record-aha-moments
+  - .opencode/skills/record-aha-moments/SKILL.md
+  - .opencode/skills/record-aha-moments/templates/AHA-MOMENT.md
+  - .opencode/skills/record-architecture
+  - .opencode/skills/record-architecture/SKILL.md
+  - .opencode/skills/record-c4
+  - .opencode/skills/record-c4/SKILL.md
+  - .opencode/skills/record-c4/templates/C4.md
+  - .opencode/skills/record-compliance
+  - .opencode/skills/record-compliance/SKILL.md
+  - .opencode/skills/record-compliance/templates/COMPLIANCE-RULE.md
+  - .opencode/skills/record-contracts
+  - .opencode/skills/record-contracts/SKILL.md
+  - .opencode/skills/record-contracts/templates/CONTRACT.md
+  - .opencode/skills/record-docs
+  - .opencode/skills/record-docs/SKILL.md
+  - .opencode/skills/record-docs/templates/AGENT-SESSION.md
+  - .opencode/skills/record-docs/templates/GLOSSARY.md
+  - .opencode/skills/record-docs/templates/MEETING-NOTES.md
+  - .opencode/skills/record-docs/templates/PRD.md
+  - .opencode/skills/record-docs/templates/RETROSPECTIVE.md
+  - .opencode/skills/record-docs/templates/RFC.md
+  - .opencode/skills/record-docs/templates/SPEC.md
+  - .opencode/skills/record-release
+  - .opencode/skills/record-release/SKILL.md
+  - .opencode/skills/record-release/references/changelog.md
+  - .opencode/skills/record-release/references/state-machine.md
+  - .opencode/skills/record-release/templates/RELEASE.md
+  - .opencode/skills/record-research
+  - .opencode/skills/record-research/SKILL.md
+  - .opencode/skills/record-research/templates/RESEARCH.md
+  - .opencode/skills/record-tech-radar
+  - .opencode/skills/record-tech-radar/SKILL.md
+  - .opencode/skills/record-tech-radar/templates/TECH-RADAR.md
+  - .opencode/skills/record-tradeoffs
+  - .opencode/skills/record-tradeoffs/SKILL.md
+  - .opencode/skills/record-tradeoffs/references/examples.md
+  - .opencode/skills/record-tradeoffs/templates/TRADEOFF.md
+  - .opencode/skills/spring-boot-coding-standards
+  - .opencode/skills/spring-boot-coding-standards/README.md
+  - .opencode/skills/spring-boot-coding-standards/SKILL.md
+  - .opencode/skills/spring-boot-coding-standards/references/examples-tianyi.md
+  - .opencode/skills/spring-boot-coding-standards/references/rules-base.md
+  - .opencode/skills/spring-boot-coding-standards/references/rules-starter.md
+  deployed_file_hashes:
+    .opencode/skills/doc-structure/SKILL.md: sha256:cdf2206a0cc55ab90f95b3a266ab741c05873d64668b389a8b9707ed8426391e
+    .opencode/skills/doc-structure/scripts/scan_docs.py: sha256:92121fbef8b1dfd071be69554a5bb4504609fca27065fb6bc0500aa85d004084
+    .opencode/skills/doc-structure/templates/AGENTS__TEMPLATE.md: sha256:f1f9440dd9da7e8d432f9f6f66df876507fb3b7a40f868c0b31fc51105abafd2
+    .opencode/skills/doc-structure/templates/INDEX__TEMPLATE.md: sha256:c44c975b79cbb827cc649f5d115257a5bc47fd4c595933fcd20fd11a784bfba8
+    .opencode/skills/doc-structure/templates/README__TEMPLATE.md: sha256:6ec6da246ed6dfb399f080f0aabd627df7b6ade1a7b9382803ec129f2ca7a7af
+    .opencode/skills/record-adr/SKILL.md: sha256:dd4fbd67e59f817d1a31183da05ba6f086e5f1fe0f1ca9f715d8fe5914f4afff
+    .opencode/skills/record-adr/references/example-adr-kafka.md: sha256:9690d2d23ea176e2ee5de19bfc36ffc9b19ef8f3b835f622e9a37d43fccee131
+    .opencode/skills/record-adr/templates/ADR.md: sha256:ae99925319becedc3d982b83cbe959e41d6034c28424658963d6f977dbdcad55
+    .opencode/skills/record-adr/templates/KEY-DECISIONS.md: sha256:451a8aa1c047973034f0f2fe59b5ff474a7daf6b1b97c662b27bba4715581ba0
+    .opencode/skills/record-aha-moments/SKILL.md: sha256:6d63c62cf56d22963cb1bda723268f0ff912039d18cec2dc2ba862b257781123
+    .opencode/skills/record-aha-moments/templates/AHA-MOMENT.md: sha256:18cf49e6d2bd47158ebbddfda1855b0e8f9f2f84b5b10d416fc36520751d9cbf
+    .opencode/skills/record-architecture/SKILL.md: sha256:e2c54d016444ce2955b046884d8220feaf2d9da13d7526c85464ab1ccaa2178d
+    .opencode/skills/record-c4/SKILL.md: sha256:5401eda4a67833658571c5e5fb22f24d259dcf0aa78b6fba485453bed4f16b6b
+    .opencode/skills/record-c4/templates/C4.md: sha256:bcebbe5137a69493dfe252251c5a8046e37900e7958716c6b54fd4d652753535
+    .opencode/skills/record-compliance/SKILL.md: sha256:0bb906d6b0bd35c0352f6f39ad2c88d590e090edc1327cd70006670995923dca
+    .opencode/skills/record-compliance/templates/COMPLIANCE-RULE.md: sha256:e456fc1894d6d74dd4cd401d675a4826b253062888accd06b96182baecc535c3
+    .opencode/skills/record-contracts/SKILL.md: sha256:e837001c30e89ac55920fb1a3c2aa9c54c1389c2f0e85c095f1296c62b818bbc
+    .opencode/skills/record-contracts/templates/CONTRACT.md: sha256:f688a18ab5a42fec345f5ff4a71484dfee3bee2ffe6eb025da308ae14e5cbc7c
+    .opencode/skills/record-docs/SKILL.md: sha256:b5ffacc00117ed33eb525f033193d0ab6a927ab468163ae03b854cb5b4b2d8de
+    .opencode/skills/record-docs/templates/AGENT-SESSION.md: sha256:b6dc99d508e0e4b077c5f05ddb99022fd00622556695143a4d9dd759e78f3e5b
+    .opencode/skills/record-docs/templates/GLOSSARY.md: sha256:962540ecf91c7263cb1e3cbfda0642adbc885744ed42bd5cc4900af1fe5c4d57
+    .opencode/skills/record-docs/templates/MEETING-NOTES.md: sha256:367392690bbd697c8a078ac58aced1909c695a5743dd448987040e34a57e49d8
+    .opencode/skills/record-docs/templates/PRD.md: sha256:666c75f6dc55fe0a9048b0e8e8eeb1ac91712b448939c83d254d47e8d17f42d4
+    .opencode/skills/record-docs/templates/RETROSPECTIVE.md: sha256:f4a726deec92d5d5937b82f33c2cf97ea2089dae58f216bb48bf0cda5de4a0c9
+    .opencode/skills/record-docs/templates/RFC.md: sha256:74ce926a518198247cdbc5997a90ad62a86e3af5af6bdd49fe812a9fa84dad58
+    .opencode/skills/record-docs/templates/SPEC.md: sha256:ffc14363af21dac5b150df7a0403c224f0cb2ab880885ca6e7c03b6b924d1575
+    .opencode/skills/record-release/SKILL.md: sha256:f73dc0ceb09e2551c4d333ff02ccf6a1107dffabcc0557246661aac1134dd0a1
+    .opencode/skills/record-release/references/changelog.md: sha256:0d9c94d7e3aef20972596bfe78da82aa54b96760b809348eb6cc0f5f4f145617
+    .opencode/skills/record-release/references/state-machine.md: sha256:e0ace8cb7452a4308baf414c75f4e3a11d213afa860682bebd93cbc9d5cd1fde
+    .opencode/skills/record-release/templates/RELEASE.md: sha256:d93ea3ef3dcd5353d481e669ed7f88e2992d5736a1826fa346bdf12ccd5392e0
+    .opencode/skills/record-research/SKILL.md: sha256:eb4e288f6aba9deea344a57cd603ce6e295e297dbdd0c2707e645eadc18108d6
+    .opencode/skills/record-research/templates/RESEARCH.md: sha256:8619ca0faac174a121d98d18935d3b5d783abb1ceaa822ed82368c4f73f4e588
+    .opencode/skills/record-tech-radar/SKILL.md: sha256:8b6d2b2e66afa01644fdf7afa6e024b7892d8f28d92b1c0b7706733c5ffc9821
+    .opencode/skills/record-tech-radar/templates/TECH-RADAR.md: sha256:2039dec2d6cd7483c3c476026466e349d9c8618ba402d428b7f3ab3f880ba0f0
+    .opencode/skills/record-tradeoffs/SKILL.md: sha256:c79e9702fa020d7e71a45d68ee3c01348ea8ebd3c3043edac282072b1293b881
+    .opencode/skills/record-tradeoffs/references/examples.md: sha256:a6bf9eed9fe189d7ccba491387c987b93a55dd03db5f426d16d0cb206847118b
+    .opencode/skills/record-tradeoffs/templates/TRADEOFF.md: sha256:4a0e4d481a530c5aa9ee1b2367e4d81cee8321e803b402a03a48b520354cda27
+    .opencode/skills/spring-boot-coding-standards/README.md: sha256:8042f0ce84824d6ed7953f3c516d6f54c6a6086f5d666d8ce141c62dd2770901
+    .opencode/skills/spring-boot-coding-standards/SKILL.md: sha256:0de4a4f4d3f4f7fc7262123d68b1d429c420565b23d58266bbb316996e476117
+    .opencode/skills/spring-boot-coding-standards/references/examples-tianyi.md: sha256:cd2b9d0da337a29afd99636bc45708a1351e6b4b9de02809a92227dfada3cba4
+    .opencode/skills/spring-boot-coding-standards/references/rules-base.md: sha256:e5bf8e1292d43751d008571da3c460e75d9acd513176516436a70177204619c8
+    .opencode/skills/spring-boot-coding-standards/references/rules-starter.md: sha256:281f05be5f076a368be48a80cc42e2fc464e13228d5a19d2f41f3367d2fa278c
+  content_hash: sha256:3c3d8e8b7eeedd553e91851350e88708348e0ca4e5415ae946b345387fe1ccf3
+deployments:
+- kind: project-relative
+  target: opencode
+  value: .opencode/skills/doc-structure
+  runtime: null
+  scope: project
+  owners:
+  - gitea.nas.vicat.top/ai-projects/home-vicat-skills/packages/documentation
+  active_owner: gitea.nas.vicat.top/ai-projects/home-vicat-skills/packages/documentation
+  content_hash: null
+- kind: project-relative
+  target: opencode
+  value: .opencode/skills/doc-structure/SKILL.md
+  runtime: null
+  scope: project
+  owners:
+  - gitea.nas.vicat.top/ai-projects/home-vicat-skills/packages/documentation
+  active_owner: gitea.nas.vicat.top/ai-projects/home-vicat-skills/packages/documentation
+  content_hash: sha256:cdf2206a0cc55ab90f95b3a266ab741c05873d64668b389a8b9707ed8426391e
+- kind: project-relative
+  target: opencode
+  value: .opencode/skills/doc-structure/scripts/scan_docs.py
+  runtime: null
+  scope: project
+  owners:
+  - gitea.nas.vicat.top/ai-projects/home-vicat-skills/packages/documentation
+  active_owner: gitea.nas.vicat.top/ai-projects/home-vicat-skills/packages/documentation
+  content_hash: sha256:92121fbef8b1dfd071be69554a5bb4504609fca27065fb6bc0500aa85d004084
+- kind: project-relative
+  target: opencode
+  value: .opencode/skills/doc-structure/templates/AGENTS__TEMPLATE.md
+  runtime: null
+  scope: project
+  owners:
+  - gitea.nas.vicat.top/ai-projects/home-vicat-skills/packages/documentation
+  active_owner: gitea.nas.vicat.top/ai-projects/home-vicat-skills/packages/documentation
+  content_hash: sha256:f1f9440dd9da7e8d432f9f6f66df876507fb3b7a40f868c0b31fc51105abafd2
+- kind: project-relative
+  target: opencode
+  value: .opencode/skills/doc-structure/templates/INDEX__TEMPLATE.md
+  runtime: null
+  scope: project
+  owners:
+  - gitea.nas.vicat.top/ai-projects/home-vicat-skills/packages/documentation
+  active_owner: gitea.nas.vicat.top/ai-projects/home-vicat-skills/packages/documentation
+  content_hash: sha256:c44c975b79cbb827cc649f5d115257a5bc47fd4c595933fcd20fd11a784bfba8
+- kind: project-relative
+  target: opencode
+  value: .opencode/skills/doc-structure/templates/README__TEMPLATE.md
+  runtime: null
+  scope: project
+  owners:
+  - gitea.nas.vicat.top/ai-projects/home-vicat-skills/packages/documentation
+  active_owner: gitea.nas.vicat.top/ai-projects/home-vicat-skills/packages/documentation
+  content_hash: sha256:6ec6da246ed6dfb399f080f0aabd627df7b6ade1a7b9382803ec129f2ca7a7af
+- kind: project-relative
+  target: opencode
+  value: .opencode/skills/record-adr
+  runtime: null
+  scope: project
+  owners:
+  - gitea.nas.vicat.top/ai-projects/home-vicat-skills/packages/documentation
+  active_owner: gitea.nas.vicat.top/ai-projects/home-vicat-skills/packages/documentation
+  content_hash: null
+- kind: project-relative
+  target: opencode
+  value: .opencode/skills/record-adr/SKILL.md
+  runtime: null
+  scope: project
+  owners:
+  - gitea.nas.vicat.top/ai-projects/home-vicat-skills/packages/documentation
+  active_owner: gitea.nas.vicat.top/ai-projects/home-vicat-skills/packages/documentation
+  content_hash: sha256:dd4fbd67e59f817d1a31183da05ba6f086e5f1fe0f1ca9f715d8fe5914f4afff
+- kind: project-relative
+  target: opencode
+  value: .opencode/skills/record-adr/references/example-adr-kafka.md
+  runtime: null
+  scope: project
+  owners:
+  - gitea.nas.vicat.top/ai-projects/home-vicat-skills/packages/documentation
+  active_owner: gitea.nas.vicat.top/ai-projects/home-vicat-skills/packages/documentation
+  content_hash: sha256:9690d2d23ea176e2ee5de19bfc36ffc9b19ef8f3b835f622e9a37d43fccee131
+- kind: project-relative
+  target: opencode
+  value: .opencode/skills/record-adr/templates/ADR.md
+  runtime: null
+  scope: project
+  owners:
+  - gitea.nas.vicat.top/ai-projects/home-vicat-skills/packages/documentation
+  active_owner: gitea.nas.vicat.top/ai-projects/home-vicat-skills/packages/documentation
+  content_hash: sha256:ae99925319becedc3d982b83cbe959e41d6034c28424658963d6f977dbdcad55
+- kind: project-relative
+  target: opencode
+  value: .opencode/skills/record-adr/templates/KEY-DECISIONS.md
+  runtime: null
+  scope: project
+  owners:
+  - gitea.nas.vicat.top/ai-projects/home-vicat-skills/packages/documentation
+  active_owner: gitea.nas.vicat.top/ai-projects/home-vicat-skills/packages/documentation
+  content_hash: sha256:451a8aa1c047973034f0f2fe59b5ff474a7daf6b1b97c662b27bba4715581ba0
+- kind: project-relative
+  target: opencode
+  value: .opencode/skills/record-aha-moments
+  runtime: null
+  scope: project
+  owners:
+  - gitea.nas.vicat.top/ai-projects/home-vicat-skills/packages/documentation
+  active_owner: gitea.nas.vicat.top/ai-projects/home-vicat-skills/packages/documentation
+  content_hash: null
+- kind: project-relative
+  target: opencode
+  value: .opencode/skills/record-aha-moments/SKILL.md
+  runtime: null
+  scope: project
+  owners:
+  - gitea.nas.vicat.top/ai-projects/home-vicat-skills/packages/documentation
+  active_owner: gitea.nas.vicat.top/ai-projects/home-vicat-skills/packages/documentation
+  content_hash: sha256:6d63c62cf56d22963cb1bda723268f0ff912039d18cec2dc2ba862b257781123
+- kind: project-relative
+  target: opencode
+  value: .opencode/skills/record-aha-moments/templates/AHA-MOMENT.md
+  runtime: null
+  scope: project
+  owners:
+  - gitea.nas.vicat.top/ai-projects/home-vicat-skills/packages/documentation
+  active_owner: gitea.nas.vicat.top/ai-projects/home-vicat-skills/packages/documentation
+  content_hash: sha256:18cf49e6d2bd47158ebbddfda1855b0e8f9f2f84b5b10d416fc36520751d9cbf
+- kind: project-relative
+  target: opencode
+  value: .opencode/skills/record-architecture
+  runtime: null
+  scope: project
+  owners:
+  - gitea.nas.vicat.top/ai-projects/home-vicat-skills/packages/documentation
+  active_owner: gitea.nas.vicat.top/ai-projects/home-vicat-skills/packages/documentation
+  content_hash: null
+- kind: project-relative
+  target: opencode
+  value: .opencode/skills/record-architecture/SKILL.md
+  runtime: null
+  scope: project
+  owners:
+  - gitea.nas.vicat.top/ai-projects/home-vicat-skills/packages/documentation
+  active_owner: gitea.nas.vicat.top/ai-projects/home-vicat-skills/packages/documentation
+  content_hash: sha256:e2c54d016444ce2955b046884d8220feaf2d9da13d7526c85464ab1ccaa2178d
+- kind: project-relative
+  target: opencode
+  value: .opencode/skills/record-c4
+  runtime: null
+  scope: project
+  owners:
+  - gitea.nas.vicat.top/ai-projects/home-vicat-skills/packages/documentation
+  active_owner: gitea.nas.vicat.top/ai-projects/home-vicat-skills/packages/documentation
+  content_hash: null
+- kind: project-relative
+  target: opencode
+  value: .opencode/skills/record-c4/SKILL.md
+  runtime: null
+  scope: project
+  owners:
+  - gitea.nas.vicat.top/ai-projects/home-vicat-skills/packages/documentation
+  active_owner: gitea.nas.vicat.top/ai-projects/home-vicat-skills/packages/documentation
+  content_hash: sha256:5401eda4a67833658571c5e5fb22f24d259dcf0aa78b6fba485453bed4f16b6b
+- kind: project-relative
+  target: opencode
+  value: .opencode/skills/record-c4/templates/C4.md
+  runtime: null
+  scope: project
+  owners:
+  - gitea.nas.vicat.top/ai-projects/home-vicat-skills/packages/documentation
+  active_owner: gitea.nas.vicat.top/ai-projects/home-vicat-skills/packages/documentation
+  content_hash: sha256:bcebbe5137a69493dfe252251c5a8046e37900e7958716c6b54fd4d652753535
+- kind: project-relative
+  target: opencode
+  value: .opencode/skills/record-compliance
+  runtime: null
+  scope: project
+  owners:
+  - gitea.nas.vicat.top/ai-projects/home-vicat-skills/packages/documentation
+  active_owner: gitea.nas.vicat.top/ai-projects/home-vicat-skills/packages/documentation
+  content_hash: null
+- kind: project-relative
+  target: opencode
+  value: .opencode/skills/record-compliance/SKILL.md
+  runtime: null
+  scope: project
+  owners:
+  - gitea.nas.vicat.top/ai-projects/home-vicat-skills/packages/documentation
+  active_owner: gitea.nas.vicat.top/ai-projects/home-vicat-skills/packages/documentation
+  content_hash: sha256:0bb906d6b0bd35c0352f6f39ad2c88d590e090edc1327cd70006670995923dca
+- kind: project-relative
+  target: opencode
+  value: .opencode/skills/record-compliance/templates/COMPLIANCE-RULE.md
+  runtime: null
+  scope: project
+  owners:
+  - gitea.nas.vicat.top/ai-projects/home-vicat-skills/packages/documentation
+  active_owner: gitea.nas.vicat.top/ai-projects/home-vicat-skills/packages/documentation
+  content_hash: sha256:e456fc1894d6d74dd4cd401d675a4826b253062888accd06b96182baecc535c3
+- kind: project-relative
+  target: opencode
+  value: .opencode/skills/record-contracts
+  runtime: null
+  scope: project
+  owners:
+  - gitea.nas.vicat.top/ai-projects/home-vicat-skills/packages/documentation
+  active_owner: gitea.nas.vicat.top/ai-projects/home-vicat-skills/packages/documentation
+  content_hash: null
+- kind: project-relative
+  target: opencode
+  value: .opencode/skills/record-contracts/SKILL.md
+  runtime: null
+  scope: project
+  owners:
+  - gitea.nas.vicat.top/ai-projects/home-vicat-skills/packages/documentation
+  active_owner: gitea.nas.vicat.top/ai-projects/home-vicat-skills/packages/documentation
+  content_hash: sha256:e837001c30e89ac55920fb1a3c2aa9c54c1389c2f0e85c095f1296c62b818bbc
+- kind: project-relative
+  target: opencode
+  value: .opencode/skills/record-contracts/templates/CONTRACT.md
+  runtime: null
+  scope: project
+  owners:
+  - gitea.nas.vicat.top/ai-projects/home-vicat-skills/packages/documentation
+  active_owner: gitea.nas.vicat.top/ai-projects/home-vicat-skills/packages/documentation
+  content_hash: sha256:f688a18ab5a42fec345f5ff4a71484dfee3bee2ffe6eb025da308ae14e5cbc7c
+- kind: project-relative
+  target: opencode
+  value: .opencode/skills/record-docs
+  runtime: null
+  scope: project
+  owners:
+  - gitea.nas.vicat.top/ai-projects/home-vicat-skills/packages/documentation
+  active_owner: gitea.nas.vicat.top/ai-projects/home-vicat-skills/packages/documentation
+  content_hash: null
+- kind: project-relative
+  target: opencode
+  value: .opencode/skills/record-docs/SKILL.md
+  runtime: null
+  scope: project
+  owners:
+  - gitea.nas.vicat.top/ai-projects/home-vicat-skills/packages/documentation
+  active_owner: gitea.nas.vicat.top/ai-projects/home-vicat-skills/packages/documentation
+  content_hash: sha256:b5ffacc00117ed33eb525f033193d0ab6a927ab468163ae03b854cb5b4b2d8de
+- kind: project-relative
+  target: opencode
+  value: .opencode/skills/record-docs/templates/AGENT-SESSION.md
+  runtime: null
+  scope: project
+  owners:
+  - gitea.nas.vicat.top/ai-projects/home-vicat-skills/packages/documentation
+  active_owner: gitea.nas.vicat.top/ai-projects/home-vicat-skills/packages/documentation
+  content_hash: sha256:b6dc99d508e0e4b077c5f05ddb99022fd00622556695143a4d9dd759e78f3e5b
+- kind: project-relative
+  target: opencode
+  value: .opencode/skills/record-docs/templates/GLOSSARY.md
+  runtime: null
+  scope: project
+  owners:
+  - gitea.nas.vicat.top/ai-projects/home-vicat-skills/packages/documentation
+  active_owner: gitea.nas.vicat.top/ai-projects/home-vicat-skills/packages/documentation
+  content_hash: sha256:962540ecf91c7263cb1e3cbfda0642adbc885744ed42bd5cc4900af1fe5c4d57
+- kind: project-relative
+  target: opencode
+  value: .opencode/skills/record-docs/templates/MEETING-NOTES.md
+  runtime: null
+  scope: project
+  owners:
+  - gitea.nas.vicat.top/ai-projects/home-vicat-skills/packages/documentation
+  active_owner: gitea.nas.vicat.top/ai-projects/home-vicat-skills/packages/documentation
+  content_hash: sha256:367392690bbd697c8a078ac58aced1909c695a5743dd448987040e34a57e49d8
+- kind: project-relative
+  target: opencode
+  value: .opencode/skills/record-docs/templates/PRD.md
+  runtime: null
+  scope: project
+  owners:
+  - gitea.nas.vicat.top/ai-projects/home-vicat-skills/packages/documentation
+  active_owner: gitea.nas.vicat.top/ai-projects/home-vicat-skills/packages/documentation
+  content_hash: sha256:666c75f6dc55fe0a9048b0e8e8eeb1ac91712b448939c83d254d47e8d17f42d4
+- kind: project-relative
+  target: opencode
+  value: .opencode/skills/record-docs/templates/RETROSPECTIVE.md
+  runtime: null
+  scope: project
+  owners:
+  - gitea.nas.vicat.top/ai-projects/home-vicat-skills/packages/documentation
+  active_owner: gitea.nas.vicat.top/ai-projects/home-vicat-skills/packages/documentation
+  content_hash: sha256:f4a726deec92d5d5937b82f33c2cf97ea2089dae58f216bb48bf0cda5de4a0c9
+- kind: project-relative
+  target: opencode
+  value: .opencode/skills/record-docs/templates/RFC.md
+  runtime: null
+  scope: project
+  owners:
+  - gitea.nas.vicat.top/ai-projects/home-vicat-skills/packages/documentation
+  active_owner: gitea.nas.vicat.top/ai-projects/home-vicat-skills/packages/documentation
+  content_hash: sha256:74ce926a518198247cdbc5997a90ad62a86e3af5af6bdd49fe812a9fa84dad58
+- kind: project-relative
+  target: opencode
+  value: .opencode/skills/record-docs/templates/SPEC.md
+  runtime: null
+  scope: project
+  owners:
+  - gitea.nas.vicat.top/ai-projects/home-vicat-skills/packages/documentation
+  active_owner: gitea.nas.vicat.top/ai-projects/home-vicat-skills/packages/documentation
+  content_hash: sha256:ffc14363af21dac5b150df7a0403c224f0cb2ab880885ca6e7c03b6b924d1575
+- kind: project-relative
+  target: opencode
+  value: .opencode/skills/record-release
+  runtime: null
+  scope: project
+  owners:
+  - gitea.nas.vicat.top/ai-projects/home-vicat-skills/packages/documentation
+  active_owner: gitea.nas.vicat.top/ai-projects/home-vicat-skills/packages/documentation
+  content_hash: null
+- kind: project-relative
+  target: opencode
+  value: .opencode/skills/record-release/SKILL.md
+  runtime: null
+  scope: project
+  owners:
+  - gitea.nas.vicat.top/ai-projects/home-vicat-skills/packages/documentation
+  active_owner: gitea.nas.vicat.top/ai-projects/home-vicat-skills/packages/documentation
+  content_hash: sha256:f73dc0ceb09e2551c4d333ff02ccf6a1107dffabcc0557246661aac1134dd0a1
+- kind: project-relative
+  target: opencode
+  value: .opencode/skills/record-release/references/changelog.md
+  runtime: null
+  scope: project
+  owners:
+  - gitea.nas.vicat.top/ai-projects/home-vicat-skills/packages/documentation
+  active_owner: gitea.nas.vicat.top/ai-projects/home-vicat-skills/packages/documentation
+  content_hash: sha256:0d9c94d7e3aef20972596bfe78da82aa54b96760b809348eb6cc0f5f4f145617
+- kind: project-relative
+  target: opencode
+  value: .opencode/skills/record-release/references/state-machine.md
+  runtime: null
+  scope: project
+  owners:
+  - gitea.nas.vicat.top/ai-projects/home-vicat-skills/packages/documentation
+  active_owner: gitea.nas.vicat.top/ai-projects/home-vicat-skills/packages/documentation
+  content_hash: sha256:e0ace8cb7452a4308baf414c75f4e3a11d213afa860682bebd93cbc9d5cd1fde
+- kind: project-relative
+  target: opencode
+  value: .opencode/skills/record-release/templates/RELEASE.md
+  runtime: null
+  scope: project
+  owners:
+  - gitea.nas.vicat.top/ai-projects/home-vicat-skills/packages/documentation
+  active_owner: gitea.nas.vicat.top/ai-projects/home-vicat-skills/packages/documentation
+  content_hash: sha256:d93ea3ef3dcd5353d481e669ed7f88e2992d5736a1826fa346bdf12ccd5392e0
+- kind: project-relative
+  target: opencode
+  value: .opencode/skills/record-research
+  runtime: null
+  scope: project
+  owners:
+  - gitea.nas.vicat.top/ai-projects/home-vicat-skills/packages/documentation
+  active_owner: gitea.nas.vicat.top/ai-projects/home-vicat-skills/packages/documentation
+  content_hash: null
+- kind: project-relative
+  target: opencode
+  value: .opencode/skills/record-research/SKILL.md
+  runtime: null
+  scope: project
+  owners:
+  - gitea.nas.vicat.top/ai-projects/home-vicat-skills/packages/documentation
+  active_owner: gitea.nas.vicat.top/ai-projects/home-vicat-skills/packages/documentation
+  content_hash: sha256:eb4e288f6aba9deea344a57cd603ce6e295e297dbdd0c2707e645eadc18108d6
+- kind: project-relative
+  target: opencode
+  value: .opencode/skills/record-research/templates/RESEARCH.md
+  runtime: null
+  scope: project
+  owners:
+  - gitea.nas.vicat.top/ai-projects/home-vicat-skills/packages/documentation
+  active_owner: gitea.nas.vicat.top/ai-projects/home-vicat-skills/packages/documentation
+  content_hash: sha256:8619ca0faac174a121d98d18935d3b5d783abb1ceaa822ed82368c4f73f4e588
+- kind: project-relative
+  target: opencode
+  value: .opencode/skills/record-tech-radar
+  runtime: null
+  scope: project
+  owners:
+  - gitea.nas.vicat.top/ai-projects/home-vicat-skills/packages/documentation
+  active_owner: gitea.nas.vicat.top/ai-projects/home-vicat-skills/packages/documentation
+  content_hash: null
+- kind: project-relative
+  target: opencode
+  value: .opencode/skills/record-tech-radar/SKILL.md
+  runtime: null
+  scope: project
+  owners:
+  - gitea.nas.vicat.top/ai-projects/home-vicat-skills/packages/documentation
+  active_owner: gitea.nas.vicat.top/ai-projects/home-vicat-skills/packages/documentation
+  content_hash: sha256:8b6d2b2e66afa01644fdf7afa6e024b7892d8f28d92b1c0b7706733c5ffc9821
+- kind: project-relative
+  target: opencode
+  value: .opencode/skills/record-tech-radar/templates/TECH-RADAR.md
+  runtime: null
+  scope: project
+  owners:
+  - gitea.nas.vicat.top/ai-projects/home-vicat-skills/packages/documentation
+  active_owner: gitea.nas.vicat.top/ai-projects/home-vicat-skills/packages/documentation
+  content_hash: sha256:2039dec2d6cd7483c3c476026466e349d9c8618ba402d428b7f3ab3f880ba0f0
+- kind: project-relative
+  target: opencode
+  value: .opencode/skills/record-tradeoffs
+  runtime: null
+  scope: project
+  owners:
+  - gitea.nas.vicat.top/ai-projects/home-vicat-skills/packages/documentation
+  active_owner: gitea.nas.vicat.top/ai-projects/home-vicat-skills/packages/documentation
+  content_hash: null
+- kind: project-relative
+  target: opencode
+  value: .opencode/skills/record-tradeoffs/SKILL.md
+  runtime: null
+  scope: project
+  owners:
+  - gitea.nas.vicat.top/ai-projects/home-vicat-skills/packages/documentation
+  active_owner: gitea.nas.vicat.top/ai-projects/home-vicat-skills/packages/documentation
+  content_hash: sha256:c79e9702fa020d7e71a45d68ee3c01348ea8ebd3c3043edac282072b1293b881
+- kind: project-relative
+  target: opencode
+  value: .opencode/skills/record-tradeoffs/references/examples.md
+  runtime: null
+  scope: project
+  owners:
+  - gitea.nas.vicat.top/ai-projects/home-vicat-skills/packages/documentation
+  active_owner: gitea.nas.vicat.top/ai-projects/home-vicat-skills/packages/documentation
+  content_hash: sha256:a6bf9eed9fe189d7ccba491387c987b93a55dd03db5f426d16d0cb206847118b
+- kind: project-relative
+  target: opencode
+  value: .opencode/skills/record-tradeoffs/templates/TRADEOFF.md
+  runtime: null
+  scope: project
+  owners:
+  - gitea.nas.vicat.top/ai-projects/home-vicat-skills/packages/documentation
+  active_owner: gitea.nas.vicat.top/ai-projects/home-vicat-skills/packages/documentation
+  content_hash: sha256:4a0e4d481a530c5aa9ee1b2367e4d81cee8321e803b402a03a48b520354cda27
+- kind: project-relative
+  target: opencode
+  value: .opencode/skills/spring-boot-coding-standards
+  runtime: null
+  scope: project
+  owners:
+  - gitea.nas.vicat.top/ai-projects/home-vicat-skills/packages/documentation
+  active_owner: gitea.nas.vicat.top/ai-projects/home-vicat-skills/packages/documentation
+  content_hash: null
+- kind: project-relative
+  target: opencode
+  value: .opencode/skills/spring-boot-coding-standards/README.md
+  runtime: null
+  scope: project
+  owners:
+  - gitea.nas.vicat.top/ai-projects/home-vicat-skills/packages/documentation
+  active_owner: gitea.nas.vicat.top/ai-projects/home-vicat-skills/packages/documentation
+  content_hash: sha256:8042f0ce84824d6ed7953f3c516d6f54c6a6086f5d666d8ce141c62dd2770901
+- kind: project-relative
+  target: opencode
+  value: .opencode/skills/spring-boot-coding-standards/SKILL.md
+  runtime: null
+  scope: project
+  owners:
+  - gitea.nas.vicat.top/ai-projects/home-vicat-skills/packages/documentation
+  active_owner: gitea.nas.vicat.top/ai-projects/home-vicat-skills/packages/documentation
+  content_hash: sha256:0de4a4f4d3f4f7fc7262123d68b1d429c420565b23d58266bbb316996e476117
+- kind: project-relative
+  target: opencode
+  value: .opencode/skills/spring-boot-coding-standards/references/examples-tianyi.md
+  runtime: null
+  scope: project
+  owners:
+  - gitea.nas.vicat.top/ai-projects/home-vicat-skills/packages/documentation
+  active_owner: gitea.nas.vicat.top/ai-projects/home-vicat-skills/packages/documentation
+  content_hash: sha256:cd2b9d0da337a29afd99636bc45708a1351e6b4b9de02809a92227dfada3cba4
+- kind: project-relative
+  target: opencode
+  value: .opencode/skills/spring-boot-coding-standards/references/rules-base.md
+  runtime: null
+  scope: project
+  owners:
+  - gitea.nas.vicat.top/ai-projects/home-vicat-skills/packages/documentation
+  active_owner: gitea.nas.vicat.top/ai-projects/home-vicat-skills/packages/documentation
+  content_hash: sha256:e5bf8e1292d43751d008571da3c460e75d9acd513176516436a70177204619c8
+- kind: project-relative
+  target: opencode
+  value: .opencode/skills/spring-boot-coding-standards/references/rules-starter.md
+  runtime: null
+  scope: project
+  owners:
+  - gitea.nas.vicat.top/ai-projects/home-vicat-skills/packages/documentation
+  active_owner: gitea.nas.vicat.top/ai-projects/home-vicat-skills/packages/documentation
+  content_hash: sha256:281f05be5f076a368be48a80cc42e2fc464e13228d5a19d2f41f3367d2fa278c
