@@ -82,10 +82,10 @@ graph TB
 
     %% 查询路径（现有）
     POST_QRY --> QRY
-    QRY --> REG
     QRY --> IFACE
 
     %% 查询路径（v0.2）
+    QRY -.-> REG
     QRY -.-> OBS
     OBS -.-> REG
     OBS -.-> IFACE
@@ -194,7 +194,8 @@ Dispatch Engine 收到事件
 | 属性 | 值 |
 |------|------|
 | **职责** | 将查询请求路由到对应后端，写入查询日志 |
-| **路由逻辑** | target=backend → 对应 Adapter；target=observation（v0.2）→ Observation Engine |
+| **路由逻辑** | target=backend → 对应 Adapter（v0.1）；target=observation（v0.2）→ Observation Engine |
+| **注册表** | v0.1 不查注册表，直接路由到后端 Adapter。注册表仅由 Dispatch Engine（写路径）在 v0.1 使用 |
 | **不创建 executions** | 查询只写一条 events（intent=query），不创建执行轨迹 |
 
 **v0.1 支持的 target**：
