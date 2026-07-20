@@ -30,31 +30,37 @@ HomeBus 是一个**家庭服务总线（Family Service Bus）**，作为 Beancou
 
 ### 核心能力
 
-```
-              ┌─────────────────────────────┐
-              │         AI Agent             │
-              │  (Hermes / 其他 LLM Agent)   │
-              └──────────┬──────────────────┘
-                         │ CLI / MCP
-                         ▼
-              ┌─────────────────────────────┐
-              │         HomeBus              │
-              │                               │
-              │  ┌──────┐  ┌──────────────┐  │
-              │  │ 事件  │  │    查询      │  │
-              │  │ 引擎  │  │    路由      │  │
-              │  └──┬───┘  └──────┬───────┘  │
-              │     │              │          │
-              │  ┌──▼─────────────▼───────┐  │
-              │  │     适配器层           │  │
-              │  │  Grocy │ Beancount │ Homebox│
-              │  └────────────────────────┘  │
-              │                               │
-              │  ┌────────────────────────┐  │
-              │  │   不可变事件日志        │  │
-              │  │   (SQLite, 对账基准)   │  │
-              │  └────────────────────────┘  │
-              └─────────────────────────────┘
+```mermaid
+graph TB
+    subgraph Agent["AI Agent Layer"]
+        A1["Hermes / 其他 LLM Agent"]
+        A2["CLI / MCP 协议"]
+    end
+
+    subgraph HB["HomeBus"]
+        direction TB
+        E["事件引擎<br/>Event Engine"]
+        Q["查询路由<br/>Query Router"]
+        AD["适配器层<br/>Adapter Layer"]
+        LOG["不可变事件日志<br/>SQLite · 对账基准"]
+
+        E --> AD
+        Q --> AD
+        E --> LOG
+    end
+
+    subgraph Backend["后端家庭系统"]
+        B1["Grocy<br/>库存/仓储"]
+        B2["Beancount<br/>账本"]
+        B3["Homebox<br/>资产"]
+    end
+
+    A1 --> A2
+    A2 --> E
+    A2 --> Q
+    AD --> B1
+    AD --> B2
+    AD --> B3
 ```
 
 | 能力 | 说明 |
@@ -75,12 +81,22 @@ HomeBus 是一个**家庭服务总线（Family Service Bus）**，作为 Beancou
 
 ### 版本路线
 
-| 版本 | 能力 | 状态 |
-|------|------|------|
-| v0.1 | CLI 交互 + 事件引擎 + SQLite + 3 适配器 | 🚧 开发中 |
-| v0.2 | MCP Server 包装 | ⏳ 规划 |
-| v0.3 | 调谐引擎 (Reconciliation) | ⏳ 规划 |
-| v1.0 | 高可用、多实例 | 🗺️ 远期 |
+```mermaid
+gantt
+    title HomeBus 版本路线
+    dateFormat  YYYY-MM
+    axisFormat  v%Y.%m
+
+    section MVP
+    CLI 交互 + 事件引擎 + SQLite + 3 适配器 :active, v01, 2026-07, 2026-09
+
+    section 增强
+    MCP Server 包装                :v02, 2026-09, 2026-11
+    调谐引擎 (Reconciliation)      :v03, 2026-11, 2027-01
+
+    section 成熟
+    高可用、多实例                  :v10, 2027-01, 2027-03
+```
 
 ---
 
