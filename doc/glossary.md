@@ -11,8 +11,9 @@
 | 观测面 | — | Observation——HomeBus 在三后端之上架设的统一抽象层。对应自然语言概念（如"零食"、"厨房"），通过 `homebus query observation <name>` 获取跨系统聚合结果。⚠️ v0.2 规划。 | HomeBus 核心 (v0.2) | [specs/routing-registry.md](specs/routing-registry.md) |
 | 路由注册表 | — | Routing Registry——品类/渠道路由规则的配置中心。存储为 TOML 文件（`~/.config/homebus/registry.toml`），Dispatch Engine 事件分发时查询获取默认位置、科目、负债账户。 | HomeBus 内部 | [specs/routing-registry.md](specs/routing-registry.md) |
 | 纠偏 | — | 用户对 Agent 分类结果的修正操作，触发撤销旧记录、重建正确记录 | Agent 分类 | [specs/homebus.md](specs/homebus.md) |
-| 消耗品 | — | 食品、日化等日常消耗物品，购买时直接费用化，库存由 Grocy 管理 | 物品分类 | [specs/homebus.md](specs/homebus.md) |
-| 资产 | — | 可出售的耐用品（游戏卡、工具、电器等），Beancount 记为资产账户，Homebox 管理位置 | 物品分类 | [specs/homebus.md](specs/homebus.md) |
+| 消耗品 | — | 食品、日化、电池、猫砂等日常消耗物品。**特征**：使用后消失、不能二次销售、无需精细位置追踪。购买时直接费用化，库存由 Grocy 管理。 | 物品分类 | [specs/backend-boundaries.md](specs/backend-boundaries.md) |
+| 资产 | — | 耐用品——洗衣机、手机、沙发、工具等。**特征**：可多次使用、可能卖出/转赠、需要精确位置追踪。Beancount 可记为资产账户，Homebox 管理物理位置。 | 物品分类 | [specs/backend-boundaries.md](specs/backend-boundaries.md) |
+| 循环品 | — | 可消耗但非食品/日化的循环物品（电池、桶装水、猫砂）。消耗逻辑同消耗品（Grocy 管理），可补充。**不含**无实物载体的循环事项（水电用量）。 | 物品分类 | [specs/backend-boundaries.md](specs/backend-boundaries.md) |
 
 ## 架构术语
 
