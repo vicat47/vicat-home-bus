@@ -21,6 +21,7 @@
 |------|------|------|--------|----------|
 | 单一写入入口 | — | 所有状态变更必须经过 HomeBus，Agent 不直接触碰任何后端 | 架构约束 | [specs/homebus.md](specs/homebus.md) |
 | 不可变事件日志 | — | 仅追加的事件记录，作为对账基准，存储每次意图事件的完整执行过程 | 数据持久化 | [specs/homebus.md](specs/homebus.md) |
+| Beancount event | — | Beancount 的 `event` 指令，产生一条时间线条目。**不是 HomeBus 事件**——纯文本注释，无 ID、不可关联、不支持结构化查询。记录是给人看的日记，不是给系统恢复用的操作记录。详见 [三阶模型](specs/backend-boundaries.md#beancount-的状态追踪能力三阶模型)。 | Beancount 功能 | [specs/backend-boundaries.md](specs/backend-boundaries.md) |
 | Adapter | — | 适配器插件，实现统一接口封装对特定后端（Beancount/Grocy/Homebox）的调用 | 扩展机制 | [specs/homebus.md](specs/homebus.md) |
 | Saga | — | 分布式事务模式——长事务拆分为多个本地事务，失败时执行补偿操作 | 事务协调 | [specs/homebus.md](specs/homebus.md) |
 
