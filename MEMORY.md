@@ -88,7 +88,7 @@ MVP 的 Agent 知道自己在查哪个后端——观测面的语义聚合本质
 
 ## 开发环境
 
-- **工作区**：`/mnt/g/codes/python/vicat-home-bus`（Windows WSL 环境下，对应 G:\codes\python\vicat-home-bus）
+- **工作区**：`$HOME/codes/python/homebus`（开发机实际路径因宿主而异）
 - **Python**：3.11.15（uv 管理虚拟环境，非 pip）
 - **依赖**：fastapi / uvicorn / aiosqlite / pydantic / click / httpx
 - **远程**：`git@github.com:vicat47/vicat-home-bus.git`

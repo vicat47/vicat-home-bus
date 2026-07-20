@@ -53,6 +53,20 @@ openspec-cn status --change "<name>" --json
 
 `apm.lock.yaml` 中有 `active_owner` 字段的技能文件由 APM 管理，来自 `home-vicat-skills` 仓库。**不要手动编辑这些文件**——下一次 `apm install` 会覆盖。本地技能（如 `openspec-*`）可自由编辑。
 
+## 敏感数据处理
+
+> 参考 [敏感数据处理规范](doc/specs/sensitive-data.md)。
+
+本仓库的敏感数据处理遵循以下规则：
+
+| 类别 | 处理方式 |
+|------|---------|
+| GitHub 公开信息（用户名、仓库名、URL） | **保留** — 公开元数据，fork 时自动适配 |
+| 内网 IP（`192.168.x.x`、`10.x.x.x`） | **脱敏** — 示例中替换为 `localhost` 或占位符 |
+| WSL 绝对路径（`/mnt/...`） | **脱敏** — 替换为 `$HOME/...` 或相对路径 |
+| 真实 API Key / Token / 密码 | **永不提交** — 仅通过环境变量注入 |
+| 占位符凭据（`your-key`、`<token>`） | **保留** — 显而易见的占位符，对读者有用 |
+
 ## record-* 文档规范
 
 所有 record-* 产生的文档使用 YAML frontmatter，必需字段：`status`、`created`、`updated`、`author`、`tags`、`related`。状态值按文档类型不同（如 ADR 用 `proposed → accepted → implemented`，research 用完整的 `draft → in-progress → in-review → complete`）。权威规范见 `doc-structure/SKILL.md`。

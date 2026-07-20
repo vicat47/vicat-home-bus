@@ -8,7 +8,7 @@ type: research
 related:
   roadmap: "ROADMAP.md"
   prd: "doc/prd/homebus-v0.1.md"
-  grocy-cli: "/mnt/g/codes/others/home-vicat-skills/packages/productivity/.apm/skills/grocy-cli/"
+  grocy-cli: "$HOME/codes/others/home-vicat-skills/packages/productivity/.apm/skills/grocy-cli/"
 ---
 
 # Research: Grocy CLI 现有资产分析
@@ -20,10 +20,10 @@ related:
 
 | 属性 | 值 |
 |------|-----|
-| **路径** | `/mnt/g/codes/others/home-vicat-skills/packages/productivity/.apm/skills/grocy-cli/` |
+| **路径** | `$HOME/codes/others/home-vicat-skills/packages/productivity/.apm/skills/grocy-cli/` |
 | **Skill 名** | `grocy-cli` (APM managed) |
-| **归属项目** | `home-vicat-skills` (G:\codes\others\home-vicat-skills) |
-| **Grocy 实例** | `http://192.168.31.40:9283` v4.5.0 |
+| **归属项目** | `home-vicat-skills` |
+| **Grocy 实例** | `http://localhost:9283` v4.5.0 |
 
 ## 文件清单
 
@@ -36,7 +36,6 @@ related:
 | `scripts/grocy_models.py` | 416 | 数据模型（Product, Cache, Preset, 校验器） |
 | `references/grocy-api-reference.md` | — | Grocy REST API 参考文档 |
 | `~/.hermes/scripts/grocy_client.py` | 同 | 软链/副本，供 HomeBus 外 Hermes cron 使用 |
-| `~/.config/grocy/config.yaml` | — | API 凭证（base_url + api_key） |
 | `~/.config/grocy/cache.yaml` | — | 位置/单位/产品组缓存 |
 
 ## 核心资产分析

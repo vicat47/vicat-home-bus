@@ -101,17 +101,17 @@ level = "info"           # 日志级别 (env: HOMEBUS_LOG_LEVEL)
 format = "json"          # 输出格式: json | text
 
 [adapters.grocy]
-base_url = "http://192.168.31.40:9283"    # (env: GROCY_API_URL)
+base_url = "http://localhost:9283"        # (env: GROCY_API_URL)
 # api_key 通过环境变量 GROCY_API_KEY 注入
 
 [adapters.beancount]
 mode = "fava"            # 接入模式: fava | file
-fava_url = "http://192.168.31.40:5000"    # (env: BEANCOUNT_FAVA_URL)
+fava_url = "http://localhost:5000"      # (env: BEANCOUNT_FAVA_URL)
 bean_file = "~/vicat/bean/main.bean"      # 文件模式路径 (env: BEANCOUNT_FILE)
 # 如无需认证可省略 token
 
 [adapters.homebox]
-base_url = "http://192.168.31.40:7745"    # (env: HOMEBOX_API_URL)
+base_url = "http://localhost:7745"      # (env: HOMEBOX_API_URL)
 # token 通过环境变量 HOMEBOX_TOKEN 注入
 
 [cli]
