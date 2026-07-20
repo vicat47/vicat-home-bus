@@ -9,6 +9,7 @@ related:
   specs: "doc/specs/homebus.md"
   routing-registry: "doc/specs/routing-registry.md"
   event-types: "doc/specs/event-types.md"
+  roadmap: "ROADMAP.md"
 ---
 
 # C4 Level 3: Components — HomeBus API Server 核心引擎
@@ -34,23 +35,26 @@ graph TB
         SAGA["Saga 补偿器<br/>Compensator<br/>推导补偿 + 执行回滚"]
         AGG["结果聚合器<br/>Result Aggregator<br/>推导终态"]
         QRY["查询路由<br/>Query Router<br/>目标路由 + 日志"]
-        OBS["观测面引擎<br/>Observation Engine<br/>跨系统聚合查询"]
     end
 
     subgraph C["Registry Layer"]
-        REG["路由注册表<br/>Routing Registry<br/>观测面定义 + 路由规则"]
+        REG["路由注册表<br/>Routing Registry<br/>品类路由 + 渠道路由"]
     end
 
     subgraph D["Adapter Layer"]
         IFACE["Adapter Interface<br/>抽象基类"]
-        GRO["Grocy Adapter<br/>库存操作"]
-        BEA["Beancount Adapter<br/>记账操作"]
-        HOM["Homebox Adapter<br/>资产操作"]
+        GRO["Grocy Adapter<br/>库存操作 + 查询"]
+        BEA["Beancount Adapter<br/>记账操作 + 查询"]
+        HOM["Homebox Adapter<br/>资产操作 + 查询"]
     end
 
     subgraph E["Database Layer"]
         EVT_DB["events 表<br/>不可变事件日志"]
         EXEC_DB["executions 表<br/>可变执行轨迹"]
+    end
+
+    subgraph F["v0.2 (Future)"]
+        OBS["观测面引擎<br/>Observation Engine<br/>跨系统聚合查询"]
     end
 
     %% 写路径
@@ -76,12 +80,15 @@ graph TB
     EXE --> EXEC_DB
     AGG --> EVT_DB
 
-    %% 查询路径
+    %% 查询路径（现有）
     POST_QRY --> QRY
-    QRY --> OBS
-    OBS --> REG
-    OBS --> IFACE
+    QRY --> REG
     QRY --> IFACE
+
+    %% 查询路径（v0.2）
+    QRY -.-> OBS
+    OBS -.-> REG
+    OBS -.-> IFACE
 
     %% 健康检查
     GET_HLTH --> IFACE
@@ -125,28 +132,28 @@ graph TB
 | **职责** | 根据事件类型推导需要分发的后端及操作，查阅注册表获取路由参数 |
 | **核心逻辑** | 基于 intent + item category 的规则引擎 + Registry 路由查询 |
 
-**子任务推导流程（新增路由查询步骤）**:
+**子任务推导流程**：
 
 ```
 Dispatch Engine 收到事件
         │
-        ├─ 0. 查 Routing Registry
+        ├─ 1. 查 Routing Registry
         │      ├─ event.items[].category → routing.categories (默认位置/科目)
         │      └─ event.store → routing.stores (负债账户)
         │
-        ├─ 1. 基于 intent + category 推导子任务
+        ├─ 2. 基于 intent + category 推导子任务
         │
-        └─ 2. 合并路由参数到子任务 params
+        └─ 3. 合并路由参数到子任务 params
 ```
 
-**子任务推导规则表**:
+**子任务推导规则表**：
 
 | intent | item category | 子任务 | 路由参数来源 |
 |--------|--------------|--------|-------------|
 | purchase | consumable | Grocy: add_stock | `routing.categories.consumable.default_grocy_location` |
-| purchase | consumable | Beancount: record_expense | `routing.categories.consumable.default_beancount_account` + `routing.stores` |
+| purchase | consumable | Beancount: record_expense | `routing.categories.consumable.default_beancount_account` + `routing.stores.*` |
 | purchase | durable | Grocy: add_stock | `routing.categories.durable.default_grocy_location` |
-| purchase | durable | Beancount: record_expense | `routing.categories.durable.default_beancount_account` + `routing.stores` |
+| purchase | durable | Beancount: record_expense | `routing.categories.durable.default_beancount_account` + `routing.stores.*` |
 | purchase | durable | Homebox: create_asset | `routing.categories.durable.default_homebox_location` |
 | consume | consumable | Grocy: consume_stock | 不需要路由参数（consume 只涉及 Grocy） |
 
@@ -166,7 +173,7 @@ Dispatch Engine 收到事件
 | **职责** | 部分子任务失败时，自动执行已成功子任务的逆向操作 |
 | **补偿推导** | 根据原始事件类型 + 已成功的子任务，自动生成补偿操作 |
 
-**补偿推导表**:
+**补偿推导表**：
 
 | 已完成的操作 | 补偿操作 |
 |-------------|---------|
@@ -186,58 +193,42 @@ Dispatch Engine 收到事件
 
 | 属性 | 值 |
 |------|------|
-| **职责** | 将查询请求路由到对应后端或观测面引擎，写入查询日志 |
-| **路由逻辑** | target=observation → Observation Engine；其他 → 对应 Adapter |
+| **职责** | 将查询请求路由到对应后端，写入查询日志 |
+| **路由逻辑** | target=backend → 对应 Adapter；target=observation（v0.2）→ Observation Engine |
 | **不创建 executions** | 查询只写一条 events（intent=query），不创建执行轨迹 |
 
-### 9. 观测面引擎 (Observation Engine)
+**v0.1 支持的 target**：
+
+| target | 示例 | 路由目标 |
+|--------|------|---------|
+| `grocy` | `{target: "grocy", operation: "stock", params: {product_id: 5}}` | Grocy Adapter |
+| `beancount` | `{target: "beancount", operation: "balance", params: {account: "Expenses:Food"}}` | Beancount Adapter |
+| `homebox` | `{target: "homebox", operation: "assets", params: {category: "家电"}}` | Homebox Adapter |
+
+### 9. 路由注册表 (Routing Registry) ← NEW
 
 | 属性 | 值 |
 |------|------|
-| **职责** | 处理观测面查询（observation target），跨系统聚合结果 |
-| **核心逻辑** | 查阅 Registry 获取观测面定义 → 并行查询各后端 → 聚合结果 |
-| **挂载点** | Query Router 之后、Adapter 调用之前 |
-| **输出格式** | `{observation, grocy?, beancount?, homebox?}` |
+| **版本** | v0.1 (MVP) |
+| **职责** | 管理品类路由和渠道路由的加载、缓存、查询 |
+| **内容** | 仅 `[routing.categories.*]` 和 `[routing.stores.*]` |
+| **加载时机** | HomeBus 启动时从 `~/.config/homebus/registry.toml` 加载 |
+| **失败行为** | 文件不存在或解析失败 → 空注册表（不退场，日志警告） |
+| **存储** | 进程内存缓存（只读，不做热加载） |
+| **调用方** | Dispatch Engine（事件分发时查路由参数） |
+| **接口** | `Registry.get_category_route(category) -> CategoryRoute` / `Registry.get_store_route(store) -> StoreRoute | None` |
 
-**工作流程**:
-
-```
-Query Router 收到 target=observation
-        │
-        ▼
-Observation Engine
-        │
-        ├─ 查 Registry → 解析观测面的后端映射
-        ├─ 无映射 → 返回空结果（不报错）
-        ├─ 有映射 → 并行查询（asyncio.gather）
-        │   ├─ Grocy Adapter (如配置了 parent_product / location)
-        │   ├─ Beancount Adapter (如配置了 account)
-        │   └─ Homebox Adapter (如配置了 category / location)
-        ├─ 聚合结果（每个后端独立，不互相影响）
-        └─ 返回统一响应 + 写入查询日志
-```
-
-### 10. 路由注册表 (Routing Registry)
-
-| 属性 | 值 |
-|------|------|
-| **职责** | 管理观测面定义和路由规则的加载、缓存、查询 |
-| **加载时机** | HomeBus 启动时从 `registry.toml` 加载 |
-| **存储** | 进程内存缓存（只读，MVP 不做热加载） |
-| **调用方** | Dispatch Engine（事件分发查路由）+ Observation Engine（查询查映射） |
-| **接口** | `Registry.lookup_observation(name) -> ObservationDef` / `Registry.lookup_routing(category, store) -> RoutingRules` |
-
-**注册表合并逻辑**:
+**注册表模板生成**：
 
 ```
-默认内置 (homebus/defaults/registry.toml)
-    ↓  笛卡尔合并（用户键覆盖内置键）
-用户配置 (~/.config/homebus/registry.toml)
+homebus init
     ↓
-最终注册表（内存，只读）
+创建 ~/.config/homebus/registry.toml
+    ↓
+用户按需编辑（不编辑 = 空配置，后端兜底）
 ```
 
-### 11. Adapter 接口定义层
+### 10. Adapter 接口定义层
 
 ```python
 class AdapterBase(ABC):
@@ -267,7 +258,7 @@ class AdapterBase(ABC):
         ...
 ```
 
-### 12. 数据库层
+### 11. 数据库层
 
 | 组件 | 职责 |
 |------|------|
@@ -280,7 +271,7 @@ class AdapterBase(ABC):
 
 ## 数据流
 
-### 数据流 1: 事件提交流程（完整）
+### 数据流 1: 事件提交流程（含路由注册表查询）
 
 ```mermaid
 sequenceDiagram
@@ -312,15 +303,17 @@ sequenceDiagram
 
     par 后台执行
         Wri->>Dis: 调度
-        Dis->>Reg: lookup_routing(category, store)
-        Reg-->>Dis: {default_location, default_account}
-        Dis->>Dis: 推导子任务清单
+        Dis->>Reg: get_category_route(category)
+        Reg-->>Dis: {default_location, default_account, homebox_enabled}
+        Dis->>Reg: get_store_route(store)
+        Reg-->>Dis: {beancount_liability} | None
+        Dis->>Dis: 合并路由参数 → 推导子任务清单
         Dis->>DB: INSERT INTO executions × N
         Dis->>Exec: 投递子任务
 
-        Exec->>Adp: Grocy: add_stock(item, location)
+        Exec->>Adp: Grocy: add_stock(params + route defaults)
         Adp-->>Exec: success
-        Exec->>Adp: Beancount: record_expense(account, amount)
+        Exec->>Adp: Beancount: record_expense(params + route defaults)
         Adp-->>Exec: success
 
         alt 全部成功
@@ -329,9 +322,8 @@ sequenceDiagram
         else 部分失败
             Exec->>Saga: 部分失败
             Saga->>Saga: 推导补偿操作
-            Saga->>Adp: Grocy: consume_stock (回滚)
+            Saga->>Adp: 执行补偿
             Adp-->>Saga: success
-            Saga->>DB: INSERT INTO executions (compensation)
             Saga->>Agg: 已补偿
             Agg->>DB: UPDATE events (status=compensated)
         end
@@ -345,7 +337,7 @@ sequenceDiagram
     CLI-->>Agent: JSON 响应
 ```
 
-### 数据流 2: 观测面查询流程
+### 数据流 2: 观测面查询（v0.2 规划，非 MVP）
 
 ```mermaid
 sequenceDiagram

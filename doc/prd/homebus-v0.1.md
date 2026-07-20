@@ -171,6 +171,7 @@ HomeBus 作为**单一写入入口 + 查询代理 + 事务协调器**，位于 A
 | Beancount Adapter | P0 | 记账操作 |
 | Homebox Adapter | P0 | 资产操作 |
 | 查询路由 | P0 | 路由查询到对应后端 |
+| 路由注册表 | P0 | TOML 配置加载 + 品类/渠道路由查询（供 Dispatch 使用） |
 | HomeBus CLI | P0 | Click 命令行，4 个命令 |
 | 事件/查询日志 | P0 | 所有操作写入 events 表 |
 
@@ -179,6 +180,7 @@ HomeBus 作为**单一写入入口 + 查询代理 + 事务协调器**，位于 A
 | 功能 | 规划阶段 | 原因 |
 |------|---------|------|
 | HomeBus MCP Server | v0.2 | CLI 先行，MCP 后加 |
+| 观测面引擎 (Observation Engine) | v0.2 | MVP 查询直连后端即可，语义聚合后加 |
 | 调谐引擎 (Reconciliation) | v0.3 | MVP 不做定期对账 |
 | Webhook 回调 | v0.2 | MVP 用轮询 |
 | 降级模式 | v0.3 | MVP 假定后端可用 |

@@ -49,6 +49,7 @@ timeline
 - [ ] Grocy Adapter
 - [ ] Beancount Adapter
 - [ ] Homebox Adapter
+- [ ] 路由注册表（TOML 加载 + 缓存，供 Dispatch Engine 查路由规则）
 - [ ] 查询路由
 - [ ] HomeBus CLI（publish / query / status / health）
 - [ ] 端到端集成测试
@@ -58,9 +59,9 @@ timeline
 
 ---
 
-## v0.2 — Agent 体验升级
+## v0.2 — Agent 体验升级与观测面
 
-**主题**：更好的集成方式
+**主题**：更好的集成方式 + 语义化查询
 
 **核心交付：**
 
@@ -68,6 +69,7 @@ timeline
 |------|------|------|
 | HomeBus MCP Server | MCP 协议封装，Agent 通过 MCP Client 直接调用 HomeBus | v0.1 API |
 | Webhook 回调 | 事件完成时主动通知 Agent（代替轮询） | v0.1 API |
+| 观测面引擎 | 跨系统聚合查询——Agent 按语义名称（零食/厨房/家电）查库存+支出+资产 | v0.1 Routing Registry + Adapter |
 | 查询结果格式化 | 结构化输出更友好（表格/摘要） | — |
 | CLI 体验优化 | 支持 JSON 文件参数、彩色输出、进度条 | v0.1 CLI |
 
