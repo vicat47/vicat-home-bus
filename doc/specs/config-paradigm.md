@@ -9,14 +9,16 @@ related:
   prd: "doc/prd/homebus-v0.1.md"
   c4-core: "doc/c4/component-core.md"
   c4-cli: "doc/c4/component-cli.md"
+  rfc-001: "doc/rfcs/rfc-001-config-format-change.md"
 ---
 
 # HomeBus 配置文件存储范式 — Specification
 
-- **Version**: 0.1.0
+- **Version**: 0.2.0
 - **Date**: 2026-07-20
 - **Author**: vicat47
 - **Status**: Draft
+- **Change**: v0.1.0 YAML → v0.2.0 TOML (RFC-001)
 
 ## Overview
 
@@ -39,77 +41,82 @@ related:
 | **12-Factor App** | 配置通过环境变量注入，配置文件是开发环境便利 |
 | **分层加载** | 默认值 < 配置文件 < 环境变量 < CLI 参数（从左到右优先级递增） |
 | **XDG 规范** | 配置文件目录遵循 `$XDG_CONFIG_HOME/homebus/` |
-| **敏感信息分离** | API Key / Token 通过环境变量注入，不进入配置文件提交到 git |
-| **单文件多节** | 一个 YAML 文件 + 多节（sections），不拆成多个文件 |
+| **敏感信息分离** | API Key / Token 通过环境变量注入，不进入配置文件 |
+| **单文件多节** | 一个 TOML 文件 + 多个 table，不拆成多个文件 |
 
 ## 配置文件格式
 
-**格式选择**: YAML
+**格式选择**: TOML
 
 | 考虑 | YAML | TOML | JSON |
 |------|------|------|------|
 | 可读性 | ⭐⭐⭐ | ⭐⭐⭐ | ⭐⭐ |
 | 注释支持 | ✅ 原生 | ✅ 原生 | ❌ |
 | 多行字符串 | ✅ | ✅ | ❌ |
-| Python 内置 | ❌ (需 PyYAML) | ✅ (tomllib 3.11+) | ✅ |
+| Python 内置 | ❌ (需 PyYAML) | ✅ (tomllib 3.11+) | ✅ (json) |
+| 类型保障 | 弱 (字符串推断) | 强 (原生类型) | 强 |
 | 常见度 | 高 (Docker Compose, K8s) | 中 (Rust 生态, pyproject) | 高 |
 
-选 YAML 理由：分层结构直观、注释原生支持、Docker Compose/GHA 等生态通用，HomeBus 已有 PyYAML 依赖（GrocyClient 用到）。
+选 TOML 理由：
+
+1. **Python 3.11+ 标准库原生支持** — `tomllib` 无需额外依赖。已安装的 PyYAML 是 Grocy Adapter 所用（解析 Grocy API 返回），不应作为配置格式的依赖因素。
+2. **类型安全** — TOML 原生区分整数、浮点、布尔、日期时间，不需要 YAML 的字符串推测。
+3. **与 pyproject.toml 一致** — 项目本身用 TOML，用户只接触一种配置语法。
+4. **Agent 写入友好** — TOML 语法确定性高，没有 YAML 的多行块缩进陷阱，Agent 生成和修改配置更可靠。
 
 ## 目录规范
 
 ```
 $XDG_CONFIG_HOME/homebus/
-├── config.yaml              # 主配置文件
+├── config.toml              # 主配置文件
 ├── .env                     # 敏感环境变量 (可选, 不提交 git)
 └── adapters/
-    ├── grocy.yaml           # Grocy 适配器专用配置 (未来扩展)
-    └── beancount.yaml       # Beancount 适配器专用配置 (未来扩展)
+    ├── grocy.toml           # Grocy 适配器专用配置 (未来扩展)
+    └── beancount.toml       # Beancount 适配器专用配置 (未来扩展)
 ```
 
 **XDG 回退**: `$XDG_CONFIG_HOME` 未设置时 → `~/.config/homebus/`
 
-**MVP 阶段**: 仅使用 `config.yaml` + 环境变量。`adapters/` 目录为预留。
+**MVP 阶段**: 仅使用 `config.toml` + 环境变量。`adapters/` 目录为预留。
 
 ## 配置文件内容
 
-### config.yaml — 完整结构
+### config.toml — 完整结构
 
-```yaml
+```toml
 # HomeBus 主配置文件
-# 优先级: YAML < 环境变量 < CLI 参数
+# 优先级: TOML < 环境变量 < CLI 参数
+# 敏感信息 (API Key / Token) 通过环境变量注入，不出现在此文件
 
-homebus:
-  api:
-    host: "0.0.0.0"           # 监听地址 (env: HOMEBUS_HOST)
-    port: 8080                 # 监听端口 (env: HOMEBUS_PORT)
-    debug: false               # 调试模式 (env: HOMEBUS_DEBUG)
+[homebus.api]
+host = "0.0.0.0"        # 监听地址 (env: HOMEBUS_HOST)
+port = 8080              # 监听端口 (env: HOMEBUS_PORT)
+debug = false            # 调试模式 (env: HOMEBUS_DEBUG)
 
-  database:
-    path: "~/.local/share/homebus/data.db"   # SQLite 路径 (env: HOMEBUS_DB_PATH)
+[homebus.database]
+path = "~/.local/share/homebus/data.db"   # SQLite 路径 (env: HOMEBUS_DB_PATH)
 
-  logging:
-    level: "info"              # 日志级别 (env: HOMEBUS_LOG_LEVEL)
-    format: "json"             # 输出格式: json | text
+[homebus.logging]
+level = "info"           # 日志级别 (env: HOMEBUS_LOG_LEVEL)
+format = "json"          # 输出格式: json | text
 
-adapters:
-  grocy:
-    base_url: "http://192.168.31.40:9283"    # (env: GROCY_API_URL)
-    # api_key 通过环境变量 GROCY_API_KEY 注入
+[adapters.grocy]
+base_url = "http://192.168.31.40:9283"    # (env: GROCY_API_URL)
+# api_key 通过环境变量 GROCY_API_KEY 注入
 
-  beancount:
-    mode: "fava"               # 接入模式: fava | file
-    fava_url: "http://192.168.31.40:5000"    # (env: BEANCOUNT_FAVA_URL)
-    bean_file: "~/vicat/bean/main.bean"      # 文件模式路径 (env: BEANCOUNT_FILE)
-    # 如无需认证可省略 token
+[adapters.beancount]
+mode = "fava"            # 接入模式: fava | file
+fava_url = "http://192.168.31.40:5000"    # (env: BEANCOUNT_FAVA_URL)
+bean_file = "~/vicat/bean/main.bean"      # 文件模式路径 (env: BEANCOUNT_FILE)
+# 如无需认证可省略 token
 
-  homebox:
-    base_url: "http://192.168.31.40:7745"    # (env: HOMEBOX_API_URL)
-    # token 通过环境变量 HOMEBOX_TOKEN 注入
+[adapters.homebox]
+base_url = "http://192.168.31.40:7745"    # (env: HOMEBOX_API_URL)
+# token 通过环境变量 HOMEBOX_TOKEN 注入
 
-cli:
-  api_url: "http://localhost:8080"           # CLI 连接 API 地址 (env: HOMEBUS_CLI_URL)
-  timeout: 30                                # CLI 请求超时 (秒)
+[cli]
+api_url = "http://localhost:8080"         # CLI 连接 API 地址 (env: HOMEBUS_CLI_URL)
+timeout = 30                              # CLI 请求超时 (秒)
 ```
 
 ### .env — 敏感信息
@@ -141,14 +148,14 @@ HOMEBOX_TOKEN=xxx
 | `cli.api_url` | `HOMEBUS_CLI_URL` | CLI 连接地址 |
 | `cli.timeout` | `HOMEBUS_CLI_TIMEOUT` | CLI 超时 |
 
-**原则**: 非敏感字段的 YAML 路径与环境变量名一一映射（`homebus.api.port` → `HOMEBUS_PORT`）。敏感字段仅通过环境变量注入，不出现在 config.yaml 中（YAML 中以注释标明 env 来源）。
+**原则**: 非敏感字段的 TOML 路径与环境变量名一一映射（`homebus.api.port` → `HOMEBUS_PORT`）。敏感字段仅通过环境变量注入，不出现在 config.toml 中（TOML 中以注释标明 env 来源）。
 
 ## 配置分层加载
 
 ```
 ① 默认值硬编码
     ↓ (配置项未在文件中找到)
-② 读取 config.yaml
+② 读取 config.toml
     ↓ (配置项未在文件中找到)
 ③ 读取 .env
     ↓ (配置项未在 .env 或非敏感)
@@ -162,22 +169,26 @@ HOMEBOX_TOKEN=xxx
 ### 加载顺序伪代码
 
 ```python
-def load_config(cli_overrides: dict = None) -> Config:
+import tomllib
+from pathlib import Path
+
+def load_config(cli_overrides: dict | None = None) -> Config:
     # 1. 默认值
     config = default_config()
-    
+
     # 2. 配置文件覆盖
-    config_file = find_config_file()  # XDG discovery
+    config_file = discover_config_path()  # XDG discovery
     if config_file:
-        merge(config, yaml.safe_load(config_file))
-    
+        with open(config_file, "rb") as f:
+            merge(config, tomllib.load(f))
+
     # 3. 环境变量覆盖
     merge_env_overrides(config, ENV_MAP)  # 非敏感字段
-    
+
     # 4. CLI 参数覆盖 (最高优先级)
     if cli_overrides:
         merge(config, cli_overrides)
-    
+
     return config
 ```
 
@@ -190,23 +201,23 @@ def load_config(cli_overrides: dict = None) -> Config:
     ↓ (有值)
    → 读取指定路径
     ↓ (无值)
-② XDG 规范: $XDG_CONFIG_HOME/homebus/config.yaml
+② XDG 规范: $XDG_CONFIG_HOME/homebus/config.toml
     ↓ (有值)
    → 读取
     ↓ (无文件)
-③ 回退: ~/.config/homebus/config.yaml
+③ 回退: ~/.config/homebus/config.toml
     ↓ (仍无文件)
 ④ 仅用默认值 + 环境变量
 ```
 
 ### CLI 配置发现
 
-CLI 不需要找 config.yaml——它只需要知道 API Server 地址：
+CLI 不需要找 config.toml——它只需要知道 API Server 地址：
 
 ```
 ① --api-url 参数 (最高)
 ② 环境变量 HOMEBUS_CLI_URL
-③ ~/.config/homebus/config.yaml 中的 cli.api_url
+③ ~/.config/homebus/config.toml 中的 cli.api_url
 ④ 默认 http://localhost:8080
 ```
 
@@ -234,7 +245,7 @@ grocy_adapter = GrocyAdapter(
 | 后端地址 | 配置文件或环境变量 | `GROCY_API_URL` |
 
 **安全性原则**:
-- 敏感信息永不出现在 config.yaml 中
+- 敏感信息永不出现在 config.toml 中
 - 环境变量可通过 Docker secret 或 `.env` 文件管理
 - `.env` 文件加入 `.gitignore`
 - API Server 不应在日志中输出敏感字段
@@ -255,15 +266,15 @@ grocy_adapter = GrocyAdapter(
 
 ### 最小配置（开发环境）
 
-```yaml
-# ~/.config/homebus/config.yaml
+```toml
+# ~/.config/homebus/config.toml
 # 开发环境最小配置，其余用默认值
 
-adapters:
-  grocy:
-    base_url: "http://localhost:9283"
-  homebox:
-    base_url: "http://localhost:7745"
+[adapters.grocy]
+base_url = "http://localhost:9283"
+
+[adapters.homebox]
+base_url = "http://localhost:7745"
 ```
 
 配合 `.env`：
@@ -277,7 +288,7 @@ HOMEBOX_TOKEN=dev-token-456
 ### 生产配置（Docker Compose）
 
 ```yaml
-# 通过环境变量注入，无需 config.yaml
+# 通过环境变量注入，无需 config.toml
 # docker-compose.yml:
 
 services:
@@ -306,11 +317,11 @@ services:
 
 | 文件 | 职责 |
 |------|------|
-| `homebus/config.py` | 配置模型（Pydantic BaseSettings）、加载器、校验器 |
-| `homebus/defaults.yaml` | 默认配置（嵌入包中，运行时不可修改） |
-| `config.yaml.example` | 注释完整的示例配置文件（提交到 git） |
+| `homebus/config.py` | 配置模型（Pydantic BaseSettings）、TOML 加载器、校验器 |
+| `homebus/defaults.toml` | 默认配置（嵌入包中，运行时不可修改） |
+| `config.toml.example` | 注释完整的示例配置文件（提交到 git） |
 | `.env.example` | 敏感字段模板（提交到 git，占位符） |
-| `.gitignore` | 确保 `.env` / `config.yaml` 不被提交 |
+| `.gitignore` | 确保 `.env` / `config.toml` 不被提交 |
 
 ### 模块接口
 
@@ -326,7 +337,7 @@ def load_config(
     env_prefix: str = "HOMEBUS_",
     cli_overrides: Optional[dict] = None,
 ) -> HomeBusConfig:
-    """分层加载配置：默认值 < YAML < 环境变量 < CLI"""
+    """分层加载配置：默认值 < TOML < 环境变量 < CLI"""
     ...
 
 def discover_config_path() -> Path:
