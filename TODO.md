@@ -2,23 +2,95 @@
 
 > 状态标记: 🔴 阻塞级 · 🟡 重要 · 🟢 优化
 > 更新: 2026-07-20
+> 已决策: 事件类型模型 ✅ · 规则表 ✅ · 位置归类策略 ✅
 
 ---
 
-## 🔴 事件类型与子任务推导规则表
+## ✅ 已决策 — 事件类型与子任务推导规则表
 
-MVP 核心业务逻辑。定义 HomeBus 能处理的事件边界。
+**决策日期**: 2026-07-20
 
-**需要确定**：
+### MVP 事件类型
 
-- [ ] 事件类型列表（如 `purchase` / `consume` / `transfer` / `discard`……）
-- [ ] 每个事件类型的字段模型（必填/可选字段、格式约束）
-- [ ] 每个事件类型 → 子任务推导规则（哪些后端参与、串行/并行）
-- [ ] 推导规则实现方式（硬编码规则表 / 可配置规则文件）
+| 事件类型 | 描述 | 涉及后端 |
+|---------|------|---------|
+| `purchase` | 购买物品（京东/超市等） | Grocy(+库存) + Beancount(记账) + Homebox(仅 durable) |
+| `consume` | 消耗/使用物品 | Grocy(-库存) |
 
-**影响**: `homebus/models.py`（事件模型）、`homebus/dispatch.py`（推导引擎）、`homebus/adapters/*.py`（各 Adapter 接口）
+> MVP 仅此两种。`discard` / `transfer` 后续加。
 
-**参考**: PRD US-1 / US-4，C4 component-core 调度引擎部分
+### 字段模型
+
+```python
+# purchase event
+{
+    "intent": "purchase",
+    "items": [
+        {
+            "name": str,              # 物品名称
+            "category": str,          # "consumable" | "durable"
+            "quantity": float,        # 数量
+            "unit": str,              # 单位 (盒/个/瓶)
+            "price": float,           # 单价
+            "grocy_product_id": str | None,  # 可选，指定 Grocy 产品 ID
+            # 扩展预留：homebox_location_id, beancount_account
+        }
+    ],
+    "total_price": float,            # 总价
+    "store": str | None,             # 购买渠道
+    "purchased_at": datetime | None, # 购买时间
+    "note": str | None,              # 备注
+    # 扩展预留：actor (家庭成员), tags, reference
+}
+
+# consume event
+{
+    "intent": "consume",
+    "items": [
+        {
+            "name": str,
+            "quantity": float,
+            "unit": str,
+            "grocy_product_id": str | None,
+        }
+    ],
+    "consumed_at": datetime | None,
+    "note": str | None,
+    # 扩展预留：actor, tags
+}
+```
+
+### 子任务推导规则
+
+**purchase** (串行 → 并行):
+
+```
+① Grocy 加库存 (所有 items)        ← 必须先成功
+    ↓ 成功
+② ╠═ Beancount 记支出 (所有 items)  ← 并行
+   ╚═ Homebox 创建资产 (仅 durable)  ← 并行
+```
+
+- Grocy 失败 → 不执行任何子任务，事件标记失败（无需补偿）
+- Beancount / Homebox 失败 → 自动补偿（回滚 Grocy 库存变动）
+- Homebox 位置归类：Agent 通过 query 接口获取位置列表后推断，在 publish 时不传入，Agent 在 purchase 成功后二次调用 Homebox 的资产创建接口（或通过另一个事件）补全位置
+
+**consume** (单项):
+
+```
+① Grocy 减库存                    ← 单项，无依赖
+```
+
+- 失败 → 事件标记失败，无需补偿
+
+### 位置归类策略
+
+HomeBus 不负责智能归类。位置归类是 **Agent 层责任**：
+
+1. Agent 通过 `homebus query homebox/locations` 获取可用位置列表 + 用户历史偏好
+2. Agent 结合用户输入上下文、查询历史、物品名称推断位置
+3. Agent 在 publish 事件中携带位置字段（或 publish 成功后通过补全事件指定）
+4. 用户默认确认 Agent 推断，用户说"不对"再由 Agent 重新查询并更新
 
 ---
 

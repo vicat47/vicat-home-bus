@@ -9,7 +9,7 @@
 
 | 类别 | 路径 | 文档数 | 状态 |
 |------|------|--------|------|
-| 规格说明 | `doc/specs/` | 2 | homebus.md + config-paradigm.md (v0.2.0, TOML) |
+| 规格说明 | `doc/specs/` | 3 | homebus.md + config-paradigm.md + event-types.md ✅ |
 | 术语表 | `doc/glossary.md` | — | 固定文件 |
 | ADR | `doc/adr/` | 0 | 待创建 |
 | C4 模型 | `doc/c4/` | 6 | 文字描述 ✅ |
