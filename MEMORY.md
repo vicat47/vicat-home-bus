@@ -55,9 +55,14 @@ MVP 的 Agent 知道自己在查哪个后端——观测面的语义聚合本质
 |------|------|------|
 | Homebox 位置智能分配 | 策略已定 | Agent 通过 query 获取可用位置列表，结合上下文推断，用户确认。HomeBus 提供资源，Agent 做决策 |
 | 补偿操作可推导 | 策略已定 | 根据原始 event_type + 已成功的 sub_task 自动生成逆向操作。不需要硬编码补偿清单 |
+| **以上 4 项后端边界决策** | ✅ **已定稿** | 详细文档见 doc/specs/backend-boundaries.md，含三阶模型、全量事件映射表、模糊地带判定规则 |
 | Beancount 接入方式 | 待定 | MVP 建议用 fava REST API，不排除直接读写 .bean 文件。各有优劣 |
 | Saga 不可撤销场景 | 待分析 | 如 Homebox 删除物品时已被手动删除，补偿怎么处理？记录日志 + 人工介入是兜底方案 |
 | 产品级覆盖（override） | v0.2+ | `[routing.overrides]"蒙牛纯牛奶"` 允许 SKU 级别的路由定制，预留 TOML 结构 |
+| **后端边界三阶模型** | ✅ 已定稿 | Beancount event 是纯文本日记(0阶)，余额反映隐式状态(1阶)，commodity tracking 纯量累计(2阶)，详见 doc/specs/backend-boundaries.md |
+| **Beancount event≠HomeBus事件日志** | ✅ 已定稿 | 前者是人看的日记，后者是系统恢复用的操作记录，互不替代 |
+| **非消耗品归属** | ✅ 已定稿 | 非消耗品(洗衣机)不经过 Grocy，走 Beancount+Homebox。循环品(电池)→Grocy，无实物载体循环(水电)→不在 Grocy |
+| **卖出入口** | ✅ 已定稿 | sell 事件先发 Homebox 标记已售，再发 Beancount 记收入 |
 
 ---
 
