@@ -8,6 +8,8 @@
 |------|------|------|--------|----------|
 | HomeBus | — | 家庭服务总线——Beancount/Grocy/Homebox 之间的单一写入入口与事务协调器 | 核心架构 | [specs/homebus.md](specs/homebus.md) |
 | 调谐引擎 | — | Reconciliation Engine——定期对比事件日志期望状态与后端实际状态，自动修复差异的守护模块 | HomeBus 内部 | [specs/homebus.md](specs/homebus.md) |
+| 观测面 | — | Observation——HomeBus 在三后端之上架设的统一抽象层。对应自然语言概念（如"零食"、"厨房"），关联各后端查询映射，通过 `homebus query observation <name>` 查询跨系统聚合结果。 | HomeBus 核心 | [specs/routing-registry.md](specs/routing-registry.md) |
+| 路由注册表 | — | Routing Registry——管理观测面定义和事件分发路由规则。存储为 TOML 文件（`~/.config/homebus/registry.toml`），启动时加载到内存。 | HomeBus 内部 | [specs/routing-registry.md](specs/routing-registry.md) |
 | 纠偏 | — | 用户对 Agent 分类结果的修正操作，触发撤销旧记录、重建正确记录 | Agent 分类 | [specs/homebus.md](specs/homebus.md) |
 | 消耗品 | — | 食品、日化等日常消耗物品，购买时直接费用化，库存由 Grocy 管理 | 物品分类 | [specs/homebus.md](specs/homebus.md) |
 | 资产 | — | 可出售的耐用品（游戏卡、工具、电器等），Beancount 记为资产账户，Homebox 管理位置 | 物品分类 | [specs/homebus.md](specs/homebus.md) |
