@@ -11,8 +11,9 @@ HomeBus 是一个**家庭服务总线**，作为 Beancount（复式记账）、G
 | 核心总线 | Python + FastAPI |
 | 数据模型 | Pydantic |
 | 事件日志 | SQLite (aiosqlite) |
-| 后台任务 | FastAPI BackgroundTasks / ARQ |
+| 后台任务 | FastAPI BackgroundTasks |
 | 适配器 | Python 内嵌模块（Grocy、Beancount、Homebox API） |
+| 路由注册表 | TOML 文件加载（品类路由 + 渠道路由） |
 | 未来集成 | Home Assistant custom_component, n8n webhook |
 
 ## 关键目录
@@ -63,11 +64,13 @@ openspec-cn status --change "<name>" --json
 
 1. **单一写入入口**：所有状态变更必须经过 HomeBus，Agent 不直接触碰任何后端
 2. **不可变事件日志**：每次事件先写入日志，再分发到后端适配器
-3. **Beancount 规则**：消耗品直接费用化（`Expenses`），可出售物品记为资产（`Assets:Inventory`）
-4. **Grocy**：管理消耗品（食品、日化）库存，Beancount 不跟踪消耗品库存
-5. **Homebox**：管理耐用品/资产（工具、电器、收藏品）的位置和状态
-6. **物品分类**：由 Agent 判断消耗品 vs 资产，支持人工纠偏
-7. **调谐引擎**：定期对比事件日志期望状态与实际状态，自动修复差异
+3. **路由注册表（MVP）**：品类路由（consumable/durable → 默认位置/科目）和渠道路由（京东/美团 → 负债账户）由 `~/.config/homebus/registry.toml` 管控，Dispatch Engine 分发时查询
+4. **观测面（v0.2）**：跨系统语义化聚合查询，MVP 阶段 Agent 通过直连后端 Adapter 查询（`homebus query grocy stock`）
+5. **Beancount 规则**：消耗品直接费用化（`Expenses`），可出售物品记为资产（`Assets:Inventory`）
+6. **Grocy**：管理消耗品（食品、日化）库存，Beancount 不跟踪消耗品库存
+7. **Homebox**：管理耐用品/资产（工具、电器、收藏品）的位置和状态
+8. **物品分类**：由 Agent 判断消耗品 vs 资产，支持人工纠偏。HomeBus 不推测分类
+9. **调谐引擎（v0.3）**：定期对比事件日志期望状态与实际状态，自动修复差异。MVP 不做
 
 ## 无构建/测试/Lint
 
