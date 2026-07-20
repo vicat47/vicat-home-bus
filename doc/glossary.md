@@ -1,0 +1,44 @@
+# 术语表
+
+> **项目专用术语词典**。定义项目中使用的领域术语、缩写、技术概念，确保团队和 AI agent 对核心概念有统一理解。
+
+## 项目专用术语
+
+| 术语 | 缩写 | 定义 | 上下文 | 相关文档 |
+|------|------|------|--------|----------|
+| HomeBus | — | 家庭服务总线——Beancount/Grocy/Homebox 之间的单一写入入口与事务协调器 | 核心架构 | [specs/homebus.md](specs/homebus.md) |
+| 调谐引擎 | — | Reconciliation Engine——定期对比事件日志期望状态与后端实际状态，自动修复差异的守护模块 | HomeBus 内部 | [specs/homebus.md](specs/homebus.md) |
+| 纠偏 | — | 用户对 Agent 分类结果的修正操作，触发撤销旧记录、重建正确记录 | Agent 分类 | [specs/homebus.md](specs/homebus.md) |
+| 消耗品 | — | 食品、日化等日常消耗物品，购买时直接费用化，库存由 Grocy 管理 | 物品分类 | [specs/homebus.md](specs/homebus.md) |
+| 资产 | — | 可出售的耐用品（游戏卡、工具、电器等），Beancount 记为资产账户，Homebox 管理位置 | 物品分类 | [specs/homebus.md](specs/homebus.md) |
+
+## 架构术语
+
+| 术语 | 缩写 | 定义 | 上下文 | 相关文档 |
+|------|------|------|--------|----------|
+| 单一写入入口 | — | 所有状态变更必须经过 HomeBus，Agent 不直接触碰任何后端 | 架构约束 | [specs/homebus.md](specs/homebus.md) |
+| 不可变事件日志 | — | 仅追加的事件记录，作为对账基准，存储每次意图事件的完整执行过程 | 数据持久化 | [specs/homebus.md](specs/homebus.md) |
+| Adapter | — | 适配器插件，实现统一接口封装对特定后端（Beancount/Grocy/Homebox）的调用 | 扩展机制 | [specs/homebus.md](specs/homebus.md) |
+| Saga | — | 分布式事务模式——长事务拆分为多个本地事务，失败时执行补偿操作 | 事务协调 | [specs/homebus.md](specs/homebus.md) |
+
+## 技术栈简称
+
+| 简称 | 全称 | 用途 | 相关文档 |
+|------|------|------|----------|
+| HA | Home Assistant | 家庭自动化平台，可作为 HomeBus 的触发源和通知渠道 | [specs/homebus.md](specs/homebus.md) |
+| n8n | n8n | 开源工作流自动化平台，稳定流程的最终落地目标 | [specs/homebus.md](specs/homebus.md) |
+| APM | Atmosphere Package Manager | OpenCode 技能包管理工具 | [AGENTS.md](../AGENTS.md) |
+
+---
+
+## 维护说明
+
+**何时添加术语**：
+- 在文档（ADR、Spec、RFC）中首次引入新缩写或领域术语时
+- PR review 中发现术语使用不一致时
+
+**命名规范**：
+- 缩写优先使用官方英文缩写（如 HA、n8n）
+- 中文术语保持一致性
+
+**维护者**：`record-docs` skill。

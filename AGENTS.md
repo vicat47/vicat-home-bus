@@ -1,46 +1,74 @@
 # AGENTS.md — vicat-home-bus
 
-## What this repo is
+## 项目定位
 
-A centralized configuration hub ("homebus") for managing OpenCode skills and workflows via APM (Atmosphere Package Manager). Despite the `python/` parent directory name, this is **not** a Python project — it contains no application code, no `requirements.txt`, no `pyproject.toml`, and no build system.
+HomeBus 是一个**家庭服务总线**，作为 Beancount（复式记账）、Grocy（消耗品库存管理）、Homebox（耐用品资产管理）之间的单一写入入口与事务协调器。AI Agent 负责意图识别和物品分类，HomeBus 负责事件的持久化、分发、调谐与对账。
 
-## Key directories
+## 技术栈
 
-| Path | Purpose | Managed by |
-|------|---------|------------|
-| `apm.yml` / `apm.lock.yaml` | APM dependency manifest and lockfile | APM CLI |
-| `.opencode/skills/` | Installed OpenCode skills | APM (do not edit files owned by lockfile entries) |
-| `.opencode/command/` | Custom `/opsx-*` commands (propose, apply, archive, explore) | repo-local |
-| `openspec/` | OpenSpec workflow (schema: `spec-driven`, config at `openspec/config.yaml`) | `openspec-cn` CLI |
-| `apm_modules/` | APM dependency cache | APM (gitignored) |
-| `tmp/` | Temporary workspace | manual |
+| 组件 | 技术 |
+|------|------|
+| 核心总线 | Python + FastAPI |
+| 数据模型 | Pydantic |
+| 事件日志 | SQLite (aiosqlite) |
+| 后台任务 | FastAPI BackgroundTasks / ARQ |
+| 适配器 | Python 内嵌模块（Grocy、Beancount、Homebox API） |
+| 未来集成 | Home Assistant custom_component, n8n webhook |
 
-## Commands
+## 关键目录
+
+| 路径 | 用途 | 管理方 |
+|------|------|--------|
+| `apm.yml` / `apm.lock.yaml` | APM 依赖清单与锁定文件 | APM CLI |
+| `.opencode/skills/` | 已安装的 OpenCode 技能 | APM（有 active_owner 的文件不要手动编辑） |
+| `.opencode/command/` | 自定义 `/opsx-*` 命令 | 本 repo |
+| `openspec/` | OpenSpec 工作流 (schema: `spec-driven`) | `openspec-cn` CLI |
+| `apm_modules/` | APM 依赖缓存 | APM（gitignored） |
+| `tmp/` | 临时文件、草稿、设计讨论 | 手动管理 |
+| `doc/` | 项目文档（架构、规格、术语表等） | record-* 技能 |
+
+## 命令
 
 ```bash
-apm install          # sync skills from apm.yml
-openspec-cn list     # list active OpenSpec changes
+apm install          # 从 apm.yml 同步技能
+openspec-cn list     # 列出活跃的 OpenSpec 变更
 openspec-cn status --change "<name>" --json
 ```
 
-## OpenSpec workflow
+## OpenSpec 工作流
 
-This repo uses OpenSpec with schema `spec-driven` (configured in `openspec/config.yaml`). Custom slash commands invoke the workflow:
+使用 `schema: spec-driven`。自定义斜杠命令：
 
-- `/opsx-propose <name>` — create a new change with proposal, design, and tasks
-- `/opsx-apply <name>` — implement tasks from a change
-- `/opsx-archive <name>` — finalize a completed change
+- `/opsx-propose <name>` — 创建变更，含 proposal、design、tasks
+- `/opsx-apply <name>` — 实现变更中的任务
+- `/opsx-archive <name>` — 归档已完成的变更
 
-The `openspec-cn` CLI is the Chinese-localized variant. All output to users should be in **Simplified Chinese**.
+`openspec-cn` 是中文本地化 CLI。对用户输出使用 **简体中文**。
 
-## Skill ownership
+## 技能归属
 
-Skills listed in `apm.lock.yaml` with `active_owner` fields are managed by APM and deployed from the `home-vicat-skills` repo. Do not manually edit these files — they will be overwritten on the next `apm install`. Local-only skills (e.g., `openspec-*`) under `.opencode/skills/` can be edited freely.
+`apm.lock.yaml` 中有 `active_owner` 字段的技能文件由 APM 管理，来自 `home-vicat-skills` 仓库。**不要手动编辑这些文件**——下一次 `apm install` 会覆盖。本地技能（如 `openspec-*`）可自由编辑。
 
-## Record-* skill conventions
+## record-* 文档规范
 
-All documentation created by `record-*` skills uses YAML frontmatter with required fields: `status`, `created`, `updated`, `author`, `tags`, `related`. Each document type has its own status values (e.g., ADR uses `proposed → accepted → implemented`, research uses the full `draft → in-progress → in-review → complete` lifecycle). See `doc-structure/SKILL.md` for the authoritative spec and dependency graph.
+所有 record-* 产生的文档使用 YAML frontmatter，必需字段：`status`、`created`、`updated`、`author`、`tags`、`related`。状态值按文档类型不同（如 ADR 用 `proposed → accepted → implemented`，research 用完整的 `draft → in-progress → in-review → complete`）。权威规范见 `doc-structure/SKILL.md`。
 
-## No build/test/lint
+## tmp/ 目录规范
 
-There is no code to build, test, or lint in this repo.
+- 临时文件、设计草稿、头脑风暴记录、外部设计讨论文档等一律放入 `tmp/`
+- `tmp/` 中的文件不持久化、不纳入项目正式文档
+- 当 tmp/ 中的设计内容稳定后，应按 record-* 规范转为 `doc/` 下的正式文档
+
+## HomeBus 核心架构约束
+
+1. **单一写入入口**：所有状态变更必须经过 HomeBus，Agent 不直接触碰任何后端
+2. **不可变事件日志**：每次事件先写入日志，再分发到后端适配器
+3. **Beancount 规则**：消耗品直接费用化（`Expenses`），可出售物品记为资产（`Assets:Inventory`）
+4. **Grocy**：管理消耗品（食品、日化）库存，Beancount 不跟踪消耗品库存
+5. **Homebox**：管理耐用品/资产（工具、电器、收藏品）的位置和状态
+6. **物品分类**：由 Agent 判断消耗品 vs 资产，支持人工纠偏
+7. **调谐引擎**：定期对比事件日志期望状态与实际状态，自动修复差异
+
+## 无构建/测试/Lint
+
+本 repo 为配置仓库，不含需构建、测试或 lint 的代码。
