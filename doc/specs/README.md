@@ -6,8 +6,13 @@
 
 ```
 specs/
-├── homebus.md          # HomeBus 核心架构规格
-└── README.md            # 本文件
+├── homebus.md              # HomeBus 核心架构规格
+├── event-types.md          # 事件类型定义与推导规则
+├── routing-registry.md     # 路由注册表
+├── config-paradigm.md      # 配置范式
+├── backend-boundaries.md   # 后端边界规范
+├── sensitive-data.md       # 敏感数据处理规范
+└── README.md               # 本文件
 ```
 
 ## 快速导航
@@ -15,6 +20,11 @@ specs/
 | 文档 | 标题 | 状态 | 日期 |
 |------|------|------|------|
 | [homebus.md](homebus.md) | HomeBus 家庭服务总线规格说明 | draft | 2026-07-20 |
+| [event-types.md](event-types.md) | 事件类型定义与推导规则 | approved | 2026-07-20 |
+| [routing-registry.md](routing-registry.md) | 路由注册表 | draft | 2026-07-20 |
+| [config-paradigm.md](config-paradigm.md) | 配置范式 | draft | 2026-07-20 |
+| [backend-boundaries.md](backend-boundaries.md) | 后端边界规范 | draft | 2026-07-20 |
+| [sensitive-data.md](sensitive-data.md) | 敏感数据处理规范 | draft | 2026-07-20 |
 
 ## 如何创建新规格
 
