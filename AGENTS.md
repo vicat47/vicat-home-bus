@@ -11,11 +11,13 @@ HomeBus 是一个**家庭服务总线**，作为 Beancount（复式记账）、G
 
 | 组件 | 技术 |
 |------|------|
-| 核心总线 | Python + FastAPI |
+| 核心总线 | Python 3.11+ + FastAPI |
+| 构建工具 | uv（依赖管理 + 虚拟环境） |
 | 数据模型 | Pydantic |
 | 事件日志 | SQLite (aiosqlite) |
 | 后台任务 | FastAPI BackgroundTasks |
 | 适配器 | Python 内嵌模块（Grocy、Beancount、Homebox API） |
+| CLI | Click（入口：`homebus`） |
 | 路由注册表 | TOML 文件加载（品类路由 + 渠道路由） |
 | 未来集成 | Home Assistant custom_component, n8n webhook |
 
@@ -23,19 +25,32 @@ HomeBus 是一个**家庭服务总线**，作为 Beancount（复式记账）、G
 
 | 路径 | 用途 | 管理方 |
 |------|------|--------|
-| `apm.yml` / `apm.lock.yaml` | APM 依赖清单与锁定文件 | APM CLI |
+| `homebus/` | 核心 Python 包（API、调度、Saga、适配器） | 手动开发 |
+| `cli/` | CLI 入口（`homebus publish/query/status`） | 手动开发 |
+| `tests/` | 测试代码 | 手动开发 |
+| `pyproject.toml` | 项目元数据 + 依赖声明 | uv |
+| `uv.lock` | uv 依赖锁定文件 | uv |
+| `apm.yml` / `apm.lock.yaml` | APM 技能清单与锁定文件 | APM CLI |
 | `.opencode/skills/` | 已安装的 OpenCode 技能 | APM（有 active_owner 的文件不要手动编辑） |
 | `.opencode/command/` | 自定义 `/opsx-*` 命令 | 本 repo |
 | `openspec/` | OpenSpec 工作流 (schema: `spec-driven`) | `openspec-cn` CLI |
 | `apm_modules/` | APM 依赖缓存 | APM（gitignored） |
-| `tmp/` | 临时文件、草稿、设计讨论 | 手动管理 |
+| `tmp/` | 临时文件、草稿、设计讨论（gitignored） | 手动管理 |
 | `doc/` | 项目文档（架构、规格、术语表等） | record-* 技能 |
+| `TODO.md` | 待决策项（动态工作区） | 手动管理 |
+| `ROADMAP.md` | 版本路线图 | 手动管理 |
 
 ## 命令
 
 ```bash
-apm install          # 从 apm.yml 同步技能
-openspec-cn list     # 列出活跃的 OpenSpec 变更
+# Python 开发
+uv sync                    # 安装/同步依赖
+uv run homebus --help      # 运行 CLI
+uv run uvicorn homebus.api:app --reload   # 启动 API 服务
+
+# 配置管理
+apm install                # 从 apm.yml 同步技能
+openspec-cn list           # 列出活跃的 OpenSpec 变更
 openspec-cn status --change "<name>" --json
 ```
 
@@ -48,6 +63,15 @@ openspec-cn status --change "<name>" --json
 - `/opsx-archive <name>` — 归档已完成的变更
 
 `openspec-cn` 是中文本地化 CLI。对用户输出使用 **简体中文**。
+
+## TODO.md 工作流
+
+TODO.md 是**待决策项**的临时工作区。决策完成后的生命周期：
+
+1. 事项在 TODO.md 中讨论、形成初步决策
+2. 决策稳定后，通过 record-* 技能转为 `doc/` 下的正式文档（Spec / RFC / ADR）
+3. 已决策内容从 TODO.md 中**删除**，在 header 保留转向引用（如 `→ doc/specs/`）
+4. TODO.md 只保留**尚未决策**的条目
 
 ## 技能归属
 
@@ -88,7 +112,3 @@ openspec-cn status --change "<name>" --json
 7. **Homebox**：耐用品资产目录与物理位置管理。设备登记/位置追踪/状态管理（完好/维修/报废/已售）；**卖出逻辑的入口**（用户说"卖掉"→ Homebox 触发 sell 事件 + Beancount 记收入）。详见 [后端边界规范](doc/specs/backend-boundaries.md)
 8. **物品分类**：由 Agent 判断消耗品 vs 资产，支持人工纠偏。HomeBus 不推测分类
 9. **调谐引擎（v0.3）**：定期对比事件日志期望状态与实际状态，自动修复差异。MVP 不做
-
-## 无构建/测试/Lint
-
-本 repo 为配置仓库，不含需构建、测试或 lint 的代码。
