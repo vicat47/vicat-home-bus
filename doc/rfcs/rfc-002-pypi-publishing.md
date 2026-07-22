@@ -1,12 +1,18 @@
-# RFC-002: CLI 通过 PyPI 发布供 Agent 使用
+---
+status: approved
+created: 2026-07-20
+updated: 2026-07-20
+author: "vicat47"
+tags: ["rfc", "homebus", "pypi", "publishing"]
+type: rfc
+related:
+  adr: ""
+  c4: "doc/c4/component-cli.md"
+  research: ""
+  radar: ""
+---
 
-- **Status**: Approved
-- **Date**: 2026-07-20
-- **Author**: vicat47
-- **Related Documents**:
-  - [C4 CLI 组件](../c4/component-cli.md)
-  - [配置格式变更](rfc-001-config-format-change.md)
-  - [MVP PRD](../../doc/prd/homebus-v0.1.md)
+# RFC-002: CLI 通过 PyPI 发布供 Agent 使用
 
 ## Summary
 

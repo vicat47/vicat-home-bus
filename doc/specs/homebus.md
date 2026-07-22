@@ -6,7 +6,7 @@ author: "vicat47"
 tags: ["spec", "homebus", "core"]
 related:
   adr: ""
-  c4: ""
+  c4: "doc/c4/component-core.md"
   research: ""
   radar: ""
 ---

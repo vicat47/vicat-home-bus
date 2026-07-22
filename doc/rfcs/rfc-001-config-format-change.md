@@ -1,13 +1,18 @@
-# RFC-001: 配置格式从 YAML 变更为 TOML
+---
+status: approved
+created: 2026-07-20
+updated: 2026-07-20
+author: "vicat47"
+tags: ["rfc", "homebus", "configuration"]
+type: rfc
+related:
+  adr: ""
+  c4: "doc/c4/component-cli.md"
+  research: ""
+  radar: ""
+---
 
-- **Status**: Approved
-- **Date**: 2026-07-20
-- **Author**: vicat47
-- **Related Documents**:
-  - [配置存储范式规格](../specs/config-paradigm.md) (v0.1.0 → v0.2.0)
-  - [C4 CLI 组件](../c4/component-cli.md)
-  - [MVP PRD](../../doc/prd/homebus-v0.1.md)
-  - [PyPI 发布策略讨论](rfc-002-pypi-publishing.md)
+# RFC-001: 配置格式从 YAML 变更为 TOML
 
 ## Summary
 

@@ -55,7 +55,7 @@ timeline
 - [ ] 端到端集成测试
 - [ ] Docker Compose 部署
 
-**PRD**: [doc/prd/homebus-v0.1.md](../prd/homebus-v0.1.md)
+**PRD**: [doc/prd/homebus-v0.1.md](doc/prd/homebus-v0.1.md)
 
 ---
 

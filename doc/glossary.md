@@ -1,3 +1,17 @@
+---
+status: complete
+created: 2026-07-20
+updated: 2026-07-22
+author: "vicat47"
+tags: ["glossary", "homebus"]
+type: glossary
+related:
+  adr: ""
+  c4: "doc/c4/context.md"
+  research: ""
+  radar: ""
+---
+
 # 术语表
 
 > **项目专用术语词典**。定义项目中使用的领域术语、缩写、技术概念，确保团队和 AI agent 对核心概念有统一理解。

@@ -24,22 +24,62 @@ export const DocDriftHook: Plugin = async ({ client }) => {
       }
     },
 
-    "session.idle": async () => {
-      sessionCounter++
-      await client.app.log({
-        body: {
-          service: "doc-drift-hook",
-          level: "info",
-          message: `会话计数: ${sessionCounter}/${CHECK_INTERVAL}`,
-        },
-      })
-    },
+    event: async ({ event }) => {
+      if (event.type === "session.idle") {
+        sessionCounter++
+        await client.app.log({
+          body: {
+            service: "doc-drift-hook",
+            level: "info",
+            message: `会话计数: ${sessionCounter}/${CHECK_INTERVAL}`,
+          },
+        })
 
-    "tui.prompt.append": async (input, output) => {
-      if (sessionCounter >= CHECK_INTERVAL) {
-        output.prompt +=
-          "\n\n> 已累计 5 次会话，建议运行 @doc-drift-checker 检查文档漂移。"
-        sessionCounter = 0
+        if (sessionCounter >= CHECK_INTERVAL) {
+          await client.app.log({
+            body: {
+              service: "doc-drift-hook",
+              level: "warn",
+              message: `已累计 ${CHECK_INTERVAL} 次空闲会话，自动触发文档漂移检查`,
+            },
+          })
+
+          const sessions = await client.session.list()
+          const currentSession = sessions.data?.[sessions.data.length - 1]
+
+          if (currentSession) {
+            await client.session.promptAsync({
+              path: { id: currentSession.id },
+              body: {
+                parts: [
+                  {
+                    type: "text",
+                    text: "@doc-drift-checker 请检查文档漂移",
+                  },
+                ],
+              },
+            })
+            await client.app.log({
+              body: {
+                service: "doc-drift-hook",
+                level: "info",
+                message: `已向会话 ${currentSession.id} 发送文档漂移检查指令`,
+              },
+            })
+          }
+
+          sessionCounter = 0
+        }
+      }
+
+      if (event.type === "session.created") {
+        await client.app.log({
+          body: {
+            service: "doc-drift-hook",
+            level: "info",
+            message: `新会话开始，当前计数: ${sessionCounter}/${CHECK_INTERVAL}`,
+          },
+        })
       }
     },
   }

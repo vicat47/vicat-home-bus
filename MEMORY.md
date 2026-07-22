@@ -93,11 +93,11 @@ MVP 的 Agent 知道自己在查哪个后端——观测面的语义聚合本质
 
 ## 开发环境
 
-- **工作区**：`$HOME/codes/python/homebus`（开发机实际路径因宿主而异）
+- **工作区**：`$HOME/develop/python/vicat-home-bus`（开发机实际路径因宿主而异）
 - **Python**：3.11.15（uv 管理虚拟环境，非 pip）
 - **依赖**：fastapi / uvicorn / aiosqlite / pydantic / click / httpx
 - **远程**：`git@github.com:vicat47/vicat-home-bus.git`
-- **文档索引**：`doc/README.md` — 17 个文档，含 C4 模型、PRD、Specs、RFCs
+- **文档索引**：详见 `doc/README.md`（含 C4 模型、PRD、Specs、RFCs）
 
 ---
 

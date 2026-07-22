@@ -10,7 +10,7 @@ related:
   event-types: "doc/specs/event-types.md"
   routing-registry: "doc/specs/routing-registry.md"
   glossary: "doc/glossary.md"
-  agenets: "AGENTS.md"
+  agents: "AGENTS.md"
 ---
 
 # HomeBus 后端定位与领域边界
