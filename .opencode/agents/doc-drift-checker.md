@@ -22,7 +22,7 @@ description: >-
     After five sessions, automatically activate the doc-drift-checker to review documentation.
     </commentary>
   </example>
-mode: primary
+mode: subagent
 permission:
   webfetch: deny
   websearch: deny

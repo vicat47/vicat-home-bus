@@ -1,7 +1,7 @@
 # INDEX: HomeBus 文档索引
 
-> 最后更新: 2026-07-20
-> 文档总数: 13
+> 最后更新: 2026-07-22
+> 文档总数: 17
 
 本文档提供项目资产的分层索引，支持 agent 渐进式上下文加载。
 
@@ -9,7 +9,7 @@
 
 | 类别 | 路径 | 文档数 | 状态 |
 |------|------|--------|------|
-| 规格说明 | `doc/specs/` | 4 | homebus.md + config-paradigm.md + event-types.md + routing-registry.md ✅ |
+| 规格说明 | `doc/specs/` | 6 | homebus.md + config-paradigm.md + event-types.md + routing-registry.md + backend-boundaries.md + sensitive-data.md ✅ |
 | 术语表 | `doc/glossary.md` | — | 固定文件 |
 | ADR | `doc/adr/` | 0 | 待创建 |
 | C4 模型 | `doc/c4/` | 6 | 文字描述 ✅ |

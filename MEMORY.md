@@ -97,7 +97,7 @@ MVP 的 Agent 知道自己在查哪个后端——观测面的语义聚合本质
 - **Python**：3.11.15（uv 管理虚拟环境，非 pip）
 - **依赖**：fastapi / uvicorn / aiosqlite / pydantic / click / httpx
 - **远程**：`git@github.com:vicat47/vicat-home-bus.git`
-- **文档索引**：`doc/README.md` — 13 个文档，含 C4 模型、PRD、Specs、RFCs
+- **文档索引**：`doc/README.md` — 17 个文档，含 C4 模型、PRD、Specs、RFCs
 
 ---
 

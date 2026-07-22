@@ -219,3 +219,6 @@ tmp/
 
 # APM dependencies
 apm_modules/
+
+# OpenCode runtime state
+.opencode/goals/

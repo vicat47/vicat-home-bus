@@ -33,6 +33,8 @@ HomeBus 是一个**家庭服务总线**，作为 Beancount（复式记账）、G
 | `apm.yml` / `apm.lock.yaml` | APM 技能清单与锁定文件 | APM CLI |
 | `.opencode/skills/` | 已安装的 OpenCode 技能 | APM（有 active_owner 的文件不要手动编辑） |
 | `.opencode/command/` | 自定义 `/opsx-*` 命令 | 本 repo |
+| `.opencode/agents/` | 自定义 Agent 定义（如 doc-drift-checker） | 本 repo |
+| `.opencode/plugins/` | 自定义 OpenCode 插件钩子 | 本 repo |
 | `openspec/` | OpenSpec 工作流 (schema: `spec-driven`) | `openspec-cn` CLI |
 | `apm_modules/` | APM 依赖缓存 | APM（gitignored） |
 | `tmp/` | 临时文件、草稿、设计讨论（gitignored） | 手动管理 |
