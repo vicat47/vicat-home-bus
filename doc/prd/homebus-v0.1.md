@@ -5,12 +5,12 @@ updated: 2026-07-20
 author: "vicat47"
 tags: ["prd", "homebus", "mvp"]
 related:
-  c4-context: "doc/c4/context.md"
-  c4-container: "doc/c4/container.md"
-  c4-core: "doc/c4/component-core.md"
-  c4-cli: "doc/c4/component-cli.md"
-  specs: "doc/specs/homebus.md"
-  glossary: "doc/glossary.md"
+  c4-context: "../c4/context.md"
+  c4-container: "../c4/container.md"
+  c4-core: "../c4/component-core.md"
+  c4-cli: "../c4/component-cli.md"
+  specs: "../specs/homebus.md"
+  glossary: "../glossary.md"
 ---
 
 # PRD: HomeBus MVP — 家庭服务总线 v0.1
@@ -324,9 +324,7 @@ events 表（不可变、仅追加）与 executions 表（可变、可追加）�
 | 文件 | 职责 |
 |------|------|
 | `homebus/models.py` | Pydantic 模型（Event, Execution, Query, Health） |
-| `homebus/database.py` | SQLite 初始化 + 连接池 + WAL 模式 |
-| `homebus/events_table.py` | events 表 CRUD |
-| `homebus/executions_table.py` | executions 表 CRUD |
+| `homebus/database.py` | SQLite 初始化 + 连接池 + WAL 模式 + events/executions 表 CRUD |
 
 ### 模块 2: API Layer
 
@@ -397,7 +395,7 @@ events 表（不可变、仅追加）与 executions 表（可变、可追加）�
 ## Open Questions
 
 1. **适配器配置** — 各后端的地址/认证/API key 通过环境变量还是配置文件？
-   → 初步建议：环境变量（12-Factor App 风格），Docker Compose 管理
+   → ✅ 已解决：TOML 配置文件 + 环境变量注入（敏感信息）。详见 [config-paradigm.md](../specs/config-paradigm.md)
 
 2. **Beancount 接入方式** — 是通过 fava REST API 还是直接读写 `.bean` 文件？
    → MVP 建议走 fava API，后续可考虑直接文件操作

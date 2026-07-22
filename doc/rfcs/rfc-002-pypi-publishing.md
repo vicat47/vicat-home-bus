@@ -7,7 +7,7 @@ tags: ["rfc", "homebus", "pypi", "publishing"]
 type: rfc
 related:
   adr: ""
-  c4: "doc/c4/component-cli.md"
+  c4: "../c4/component-cli.md"
   research: ""
   radar: ""
 ---
@@ -70,17 +70,17 @@ Homepage = "https://github.com/vicat47/vicat-home-bus"
 # 安装
 pipx install homebus-cli
 
-# 创建事件
-homebus create grocy/stock/add --body '{"product_id": "1", "amount": 2}'
+# 提交购买事件
+homebus publish --intent purchase --items '[{"name":"牛奶","quantity":3,"category":"consumable"}]' --total-price 60
 
-# 执行事件
-homebus exec <event-id>
+# 查询事件状态
+homebus status --event-id <event-id>
 
-# 查询
-homebus query grocy/stock --filter '{"product_id": "1"}'
+# 查询后端状态
+homebus query --target grocy --operation stock_level --params '{"item":"牛奶"}'
 
-# 修正 (Saga 补偿)
-homebus correct <event-id>
+# 健康检查
+homebus health
 ```
 
 ### Impact

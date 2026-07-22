@@ -6,10 +6,10 @@ author: "vicat47"
 tags: ["spec", "homebus", "configuration", "adapter"]
 type: spec
 related:
-  prd: "doc/prd/homebus-v0.1.md"
-  c4-core: "doc/c4/component-core.md"
-  c4-cli: "doc/c4/component-cli.md"
-  rfc-001: "doc/rfcs/rfc-001-config-format-change.md"
+  prd: "../prd/homebus-v0.1.md"
+  c4-core: "../c4/component-core.md"
+  c4-cli: "../c4/component-cli.md"
+  rfc-001: "../rfcs/rfc-001-config-format-change.md"
 ---
 
 # HomeBus 配置文件存储范式 — Specification
@@ -107,7 +107,7 @@ base_url = "http://localhost:9283"        # (env: GROCY_API_URL)
 [adapters.beancount]
 mode = "fava"            # 接入模式: fava | file
 fava_url = "http://localhost:5000"      # (env: BEANCOUNT_FAVA_URL)
-bean_file = "~/vicat/bean/main.bean"      # 文件模式路径 (env: BEANCOUNT_FILE)
+bean_file = "~/path/to/your/main.bean"      # 文件模式路径 (env: BEANCOUNT_FILE)
 # 如无需认证可省略 token
 
 [adapters.homebox]

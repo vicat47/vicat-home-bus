@@ -294,6 +294,8 @@ v0.2 将提供 MCP Server，Agent 可直接通过 MCP tools 调用 HomeBus，无
 | 配置 | TOML (`tomllib` 标准库) |
 | CLI | Click |
 | 模型层 | Pydantic |
+| 异步 HTTP 客户端 | httpx |
+| Grocy API 解析 | PyYAML |
 
 ## 文档索引
 
@@ -306,7 +308,7 @@ v0.2 将提供 MCP Server，Agent 可直接通过 MCP tools 调用 HomeBus，无
 | [配置范式](doc/specs/config-paradigm.md) | 配置加载分层、目录规范、环境变量映射 |
 | [敏感数据处理](doc/specs/sensitive-data.md) | 仓库脱敏规则与发布前检查清单 |
 | [术语表](doc/glossary.md) | 项目专用术语定义 |
-| [C4 模型](doc/c4/) | 6 份架构视图（上下文/容器/组件） |
+| [C4 模型](doc/c4/) | 5 份架构视图 + 图例（上下文/容器/组件） |
 | [MVP PRD](doc/prd/homebus-v0.1.md) | v0.1 产品需求文档 |
 | [RFC-001](doc/rfcs/rfc-001-config-format-change.md) | 配置格式从 YAML 变更为 TOML |
 | [RFC-002](doc/rfcs/rfc-002-pypi-publishing.md) | CLI 通过 PyPI 发布 |

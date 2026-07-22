@@ -6,10 +6,10 @@ author: "vicat47"
 tags: ["spec", "homebus", "events", "mvp"]
 type: spec
 related:
-  prd: "doc/prd/homebus-v0.1.md"
-  c4-core: "doc/c4/component-core.md"
-  prd-us1: "doc/prd/homebus-v0.1.md#US-1"
-  prd-us4: "doc/prd/homebus-v0.1.md#US-4"
+  prd: "../prd/homebus-v0.1.md"
+  c4-core: "../c4/component-core.md"
+  prd-us1: "../prd/homebus-v0.1.md#US-1"
+  prd-us4: "../prd/homebus-v0.1.md#US-4"
 ---
 
 # HomeBus 事件类型定义与推导规则 — Specification

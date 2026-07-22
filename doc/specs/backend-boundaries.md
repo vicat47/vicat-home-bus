@@ -6,11 +6,11 @@ author: "vicat47"
 tags: ["spec", "homebus", "backends", "domain"]
 type: spec
 related:
-  context: "doc/c4/context.md"
-  event-types: "doc/specs/event-types.md"
-  routing-registry: "doc/specs/routing-registry.md"
-  glossary: "doc/glossary.md"
-  agents: "AGENTS.md"
+  context: "../c4/context.md"
+  event-types: "event-types.md"
+  routing-registry: "routing-registry.md"
+  glossary: "../glossary.md"
+  agents: "../../AGENTS.md"
 ---
 
 # HomeBus 后端定位与领域边界

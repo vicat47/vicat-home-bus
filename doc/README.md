@@ -12,7 +12,7 @@
 | 规格说明 | `doc/specs/` | 6 | homebus.md + config-paradigm.md + event-types.md + routing-registry.md + backend-boundaries.md + sensitive-data.md ✅ |
 | 术语表 | `doc/glossary.md` | — | 固定文件 |
 | ADR | `doc/adr/` | 0 | 目录暂未初始化，按需 `mkdir doc/adr` |
-| C4 模型 | `doc/c4/` | 6 | 文字描述 ✅ |
+| C4 模型 | `doc/c4/` | 5 + 图例 | 文字描述 ✅ |
 | PRD | `doc/prd/` | 1 | Draft |
 | Roadmap | `/ROADMAP.md` | — | v0.1 → v1.0 路线图 |
 | 调研 | `doc/research/` | 1 | Grocy CLI 资产分析 ✅ |

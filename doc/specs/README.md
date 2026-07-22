@@ -24,7 +24,7 @@ specs/
 | [routing-registry.md](routing-registry.md) | 路由注册表 | draft | 2026-07-20 |
 | [config-paradigm.md](config-paradigm.md) | 配置范式 | draft | 2026-07-20 |
 | [backend-boundaries.md](backend-boundaries.md) | 后端边界规范 | draft | 2026-07-20 |
-| [sensitive-data.md](sensitive-data.md) | 敏感数据处理规范 | draft | 2026-07-20 |
+| [sensitive-data.md](sensitive-data.md) | 敏感数据处理规范 | draft | 2026-07-21 |
 
 ## 如何创建新规格
 

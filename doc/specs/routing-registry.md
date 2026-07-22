@@ -6,10 +6,10 @@ author: "vicat47"
 tags: ["spec", "homebus", "routing", "registry"]
 type: spec
 related:
-  prd: "doc/prd/homebus-v0.1.md"
-  event-types: "doc/specs/event-types.md"
-  c4-core: "doc/c4/component-core.md"
-  roadmap: "ROADMAP.md"
+  prd: "../prd/homebus-v0.1.md"
+  event-types: "event-types.md"
+  c4-core: "../c4/component-core.md"
+  roadmap: "../../ROADMAP.md"
 ---
 
 # 路由注册表 — Routing Registry Specification

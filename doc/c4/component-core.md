@@ -5,11 +5,11 @@ updated: 2026-07-20
 author: "vicat47"
 tags: ["c4", "homebus", "component", "core"]
 related:
-  container: "doc/c4/container.md"
-  specs: "doc/specs/homebus.md"
-  routing-registry: "doc/specs/routing-registry.md"
-  event-types: "doc/specs/event-types.md"
-  roadmap: "ROADMAP.md"
+  container: "container.md"
+  specs: "../specs/homebus.md"
+  routing-registry: "../specs/routing-registry.md"
+  event-types: "../specs/event-types.md"
+  roadmap: "../../ROADMAP.md"
 ---
 
 # C4 Level 3: Components — HomeBus API Server 核心引擎

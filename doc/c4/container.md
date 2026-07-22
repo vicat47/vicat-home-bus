@@ -5,8 +5,8 @@ updated: 2026-07-20
 author: "vicat47"
 tags: ["c4", "homebus", "container"]
 related:
-  context: "doc/c4/context.md"
-  specs: "doc/specs/homebus.md"
+  context: "context.md"
+  specs: "../specs/homebus.md"
 ---
 
 # C4 Level 2: Container Diagram

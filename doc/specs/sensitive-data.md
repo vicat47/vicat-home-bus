@@ -1,13 +1,13 @@
 ---
 status: draft
 created: 2026-07-20
-updated: 2026-07-20
+updated: 2026-07-21
 author: "vicat47"
 tags: ["spec", "homebus", "security", "publishing"]
 type: spec
 related:
-  agents: "AGENTS.md"
-  memory: "MEMORY.md"
+  agents: "../../AGENTS.md"
+  memory: "../../MEMORY.md"
 ---
 
 # HomeBus 敏感数据处理规范

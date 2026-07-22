@@ -7,7 +7,7 @@ tags: ["rfc", "homebus", "configuration"]
 type: rfc
 related:
   adr: ""
-  c4: "doc/c4/component-cli.md"
+  c4: "../c4/component-cli.md"
   research: ""
   radar: ""
 ---

@@ -5,8 +5,8 @@ updated: 2026-07-20
 author: "vicat47"
 tags: ["c4", "homebus", "component", "mcp"]
 related:
-  container: "doc/c4/container.md"
-  core: "doc/c4/component-core.md"
+  container: "container.md"
+  core: "component-core.md"
 ---
 
 # C4 Level 3: Components — HomeBus MCP Server

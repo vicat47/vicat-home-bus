@@ -23,6 +23,8 @@ HomeBus 是一个**家庭服务总线**，作为 Beancount（复式记账）、G
 | 适配器 | Python 内嵌模块（Grocy、Beancount、Homebox API） |
 | CLI | Click（入口：`homebus`） |
 | 路由注册表 | TOML 文件加载（品类路由 + 渠道路由） |
+| 异步 HTTP 客户端 | httpx |
+| Grocy API 解析 | PyYAML |
 | 未来集成 | Home Assistant custom_component, n8n webhook |
 
 ## 关键目录

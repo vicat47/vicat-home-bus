@@ -6,8 +6,8 @@ author: "vicat47"
 tags: ["research", "grocy", "cli", "homebus", "adapter"]
 type: research
 related:
-  roadmap: "ROADMAP.md"
-  prd: "doc/prd/homebus-v0.1.md"
+  roadmap: "../../ROADMAP.md"
+  prd: "../prd/homebus-v0.1.md"
   grocy-cli: "$HOME/codes/others/home-vicat-skills/packages/productivity/.apm/skills/grocy-cli/"
 ---
 

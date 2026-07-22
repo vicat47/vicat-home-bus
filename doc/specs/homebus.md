@@ -4,9 +4,10 @@ created: 2026-07-20
 updated: 2026-07-20
 author: "vicat47"
 tags: ["spec", "homebus", "core"]
+type: spec
 related:
   adr: ""
-  c4: "doc/c4/component-core.md"
+  c4-core: "../c4/component-core.md"
   research: ""
   radar: ""
 ---

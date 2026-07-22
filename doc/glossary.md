@@ -7,7 +7,7 @@ tags: ["glossary", "homebus"]
 type: glossary
 related:
   adr: ""
-  c4: "doc/c4/context.md"
+  c4: "c4/context.md"
   research: ""
   radar: ""
 ---

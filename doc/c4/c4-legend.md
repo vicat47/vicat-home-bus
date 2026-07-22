@@ -5,8 +5,8 @@ updated: 2026-07-20
 author: "vicat47"
 tags: ["c4", "homebus", "legend"]
 related:
-  context: "doc/c4/context.md"
-  container: "doc/c4/container.md"
+  context: "context.md"
+  container: "container.md"
 ---
 
 # C4 图例说明

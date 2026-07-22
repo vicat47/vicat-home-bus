@@ -5,8 +5,8 @@ updated: 2026-07-20
 author: "vicat47"
 tags: ["c4", "homebus", "context"]
 related:
-  specs: "doc/specs/homebus.md"
-  glossary: "doc/glossary.md"
+  specs: "../specs/homebus.md"
+  glossary: "../glossary.md"
 ---
 
 # C4 Level 1: System Context
