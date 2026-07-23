@@ -123,3 +123,43 @@ MVP 测试方案。
 - [ ] **G-11: Liabilities:Unknown 兜底账户** — `beancount-integration.md` 未提及该兜底账户，需补充初始化要求
 - [ ] **G-13: homebus.md 已过时** — 早期综合 spec 未随子 spec 同步更新，考虑标记 deprecated
 - [ ] **G-14: 混合品类 purchase 拆分** — consumable + durable 混合时 Beancount 分录如何分拆
+
+---
+
+## 🟡 支付方式 vs 购买渠道解耦
+
+账本调研发现：现有 routing registry 的 `store` 维度隐含了"一个商店=一个负债账户"，但实际账本中支付方式和商店是解耦的：
+
+| 概念 | 示例 | routing registry 现状 |
+|------|------|---------------------|
+| 在哪买的（store）| "京东"、"美团" | 映射到负债账户（`Liabilities:CreditCard:JD`） |
+| 怎么付的（payment）| `Assets:Cash:WeChatPay`、`Liabilities:Card:CMB`、`Assets:Charged:Eshop:MeituanEnterprise` | 未建模 |
+
+**需要确定**：
+
+- [ ] `store` 维度保留但语义修正为"渠道"（记录在哪买的，供统计分析）
+- [ ] 新增 `payment_method` 字段，Agent 在 purchase 事件中同时传 `store` 和 `payment`
+- [ ] routing registry 渠道路由：`store` 用于信息标注，`payment_method` 用于 Beancount 负债账户映射
+
+**影响**: `event-types.md` purchase 字段模型、`routing-registry.md` 渠道路由建模
+
+---
+
+## 🟡 Entry 级别 item: 元数据生成
+
+现有账本已在用 `item:` 和 `gift_to:` 做分量级标注。HomeBus 生成的 purchase entry 应同步携带：
+
+```beancount
+Expenses:Food:Groceries  60.00 CNY
+    item: "蒙牛纯牛奶"
+Expenses:Household:Cleaning  45.00 CNY
+    item: "洗衣液"
+```
+
+**需要确定**：
+
+- [ ] `beancount-integration.md` entry 格式示例中补充 `item:` meta
+- [ ] Beancount Adapter 生成分录时，从 Event 的 `items[].name` 提取 `item:` meta
+- [ ] 多 item 合并到同一科目时（如两件 consumable 都走 `Expenses:Food:Groceries`），`item:` 如何标注？
+
+**影响**: `beancount-integration.md` entry 格式、`homebus/adapters/beancount.py` 生成逻辑
