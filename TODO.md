@@ -1,47 +1,34 @@
 # HomeBus TODO — 待决策项
 
 > 状态标记: 🔴 阻塞级 · 🟡 重要 · 🟢 优化
-> 更新: 2026-07-22
-> 已决策: 事件类型模型 ✅ · 规则表 ✅ · 位置归类策略 ✅ · Routing Registry ✅ (→ [doc/specs/](doc/specs/))
-
----
-
-## 🟡 Beancount 接入方式
-
-Beancount 的写入路径。
-
-**已决策** (→ [doc/specs/beancount-integration.md](doc/specs/beancount-integration.md))：
-
-- [x] 写入方式：CLI 命令 `homebus beancount write`，生成 `.bean` 分录文本
-- [x] 文件隔离：HomeBus 写入 `{ledger}/{YYYY}/homebus-{MM}.bean`，不碰用户手写文件
-- [x] Git 同步：写入后自动 `git add` + `git commit`
-- [x] 幂等：扫描已有 `event:` meta 字段去重
-- [x] 校验：写入后 `bean-check`，失败回滚
+> 更新: 2026-07-23
+> 已决策 (P0+P1): 数据库Schema ✅ · 事件状态机 ✅ · SubTask模型 ✅ · Adapter Action ✅ · API契约 ✅ · CLI规范 ✅ · 幂等路径 ✅ · async集成 ✅ · Saga补偿推导 ✅ · 配置模型 ✅ · Beancount元数据 ✅ (→ [doc/specs/](doc/specs/))
 
 ---
 
 ## 🟡 Saga 补偿的不可逆边界
 
-补偿操作自身可能失败（如删除一个已不存在的物品），需要定义边界。
+补偿操作自身可能失败，需要定义边界。
 
 **需要确定**：
 
-- [ ] 哪些操作类型可安全补偿（幂等、可逆）
-- [ ] 哪些操作类型不可撤销（仅记录日志 + 告警人工介入）
 - [ ] 补偿失败后的重试策略（重试次数？人工介入条件？）
 - [ ] 补偿触发方式（自动执行 / 确认后执行）
 
-**影响**: `homebus/saga.py` 实现方案
+**已决策**:
 
 - [x] 补偿策略：删除 Beancount entry 行 + 新 git commit（非 git revert）。见 [beancount-integration.md](doc/specs/beancount-integration.md) FR-10
+- [x] Homebox delete_asset 幂等：404=视为成功（目标已达成）。见 [adapter-interfaces.md](doc/specs/adapter-interfaces.md)
+- [x] Grocy 补偿只还原量变不删除产品。见 [adapter-interfaces.md](doc/specs/adapter-interfaces.md)
+- [x] Saga 补偿推导算法：COMPENSATION_MAP + lambda。见 [adapter-interfaces.md](doc/specs/adapter-interfaces.md)
 
-### 🟡 Saga 回滚时的 git 冲突处理
+---
 
-当多个事件先后写入同一 `homebus-{MM}.bean` 后，Saga 回滚早期事件的 commit 时，可能与后续 commit 产生行级冲突。
+## 🟡 Saga 回滚时的 git 冲突处理
 
-**需要确定**：
+当多个事件先后写入同一 `homebus-{MM}.bean` 后，Saga 回滚早期事件时可能产生行级冲突。
 
-- [ ] 每个 Beancount entry 是否独立 git commit？（推荐：是，减小冲突面）
+- [ ] 每个 Beancount entry 是否独立 git commit？（推荐：是）
 - [ ] git commit 冲突时降级策略：标记告警日志？放弃自动回滚改为人工介入？
 - [ ] 是否在 entry 之间保留空行/分隔注释以降低相邻行的冲突概率？
 
@@ -49,30 +36,26 @@ Beancount 的写入路径。
 
 ---
 
-## 🟡 CLI JSON 参数传递
+## 🟡 支付方式 vs 购买渠道解耦
 
-嵌套 JSON 在 shell 命令行的引号处理易出错。
+现有 routing registry 的 `store` 维度隐含了"一个商店=一个负债账户"，但账本中支付方式和商店是解耦的：
 
-**需要确定**：
+| 概念 | 示例 | 现状 |
+|------|------|------|
+| 在哪买的（store）| "京东"、"美团" | 映射到负债账户 |
+| 怎么付的（payment）| `WeChatPay`、`CMB`、`MeituanEnterprise` | 未建模 |
 
-- [ ] 方案 A: 标准 `--body '{"key": "val"}'`（Agent 可控引号）
-- [ ] 方案 B: `--body-file <json-path>` 从文件读取
-- [ ] 方案 C: 从 stdin 读取 JSON
-- [ ] 方案 D: 混合支持（优先 `--body`，后备 `--body-file`）
+- [ ] `store` 保留为信息标注，新增 `payment_method` 字段
+- [ ] routing registry 渠道路由：`payment_method` 用于 Beancount 负债账户映射
 
-**参考**: PRD v0.1 US-3 的 Open Questions #3
+**影响**: `event-types.md`、`routing-registry.md`
 
 ---
 
-## 🟡 PyPI 包名确认
-
-`homebus-cli` 在 PyPI 上是否可用。
-
-**需要确定**：
+## 🟢 PyPI 包名确认
 
 - [ ] 检查 `homebus-cli` 在 PyPI 是否已被占用
-- [ ] 备选名（如 `vicat-homebus` / `homebus-toolkit`）
-- [ ] 确定发布作用域：只发 CLI，还是 API Server 也作为 extra 发布
+- [ ] 备选名（`vicat-homebus` / `homebus-toolkit`）
 
 **参考**: RFC-002
 
@@ -80,86 +63,35 @@ Beancount 的写入路径。
 
 ## 🟢 版本号策略
 
-PyPI 发布用版本号规则。
-
-**需要确定**：
-
 - [ ] 预发布标记：`0.1.0a1` / `0.1.0rc1`？
-- [ ] 版本间依赖关系（CLI v0.1.0 是否必须对应 Server v0.1.0？）
+- [ ] CLI v0.1.0 与 Server v0.1.0 版本耦合关系？
 
 ---
 
 ## 🟢 测试策略
 
-MVP 测试方案。
-
-**需要确定**：
-
-- [ ] 单元测试框架：pytest
 - [ ] Adapter 测试：mock 还是 real API？
-- [ ] 端到端测试：启动 HomeBus → 调用 CLI → 验证后端？
-- [ ] CI/CD：GitHub Actions ？发布流水线？
+- [ ] 端到端测试：启动 HomeBus → CLI → 验证后端
+- [ ] CI/CD：GitHub Actions？发布流水线？
 
 ---
 
 ## 🟡 doc-drift-hook plugin 触发 gap
 
-`.opencode/plugins/doc-drift-hook.ts` 存在两个 gap：
+`.opencode/plugins/doc-drift-hook.ts` 两个 gap：
 
-- [ ] **git commit 钩子空转**：`tool.execute.before` 检测到 git commit 后只打 log，未调用 `client.session.promptAsync` 触发 drift check（与 `session.idle` 里的逻辑脱节）
-- [ ] **缺少文档写入事件监听**：当前只监听 `session.idle`（每 5 次空闲触发），缺少 `file.write` / `file.edit` 事件钩子。文档变更后无法立即感知，只能等 periodic 检查
-
----
-
-## 🟢 Beancount 集成 spec 剩余 gap（来自 grill 审查）
-
-以下为 `beancount-integration.md` grill 审查后剩余的中低优先级 gap：
-
-- [ ] **G-6: 文件初始化行为** — `homebus-MM.bean` 首次创建时的目录建立、文件头模板、`main.bean` include 提示
-- [ ] **G-7: 文件锁细节** — `fcntl.flock` vs `.lock` 文件、超时值、死锁处理、Saga 回滚是否走锁
-- [ ] **G-8: bean-check 超时行为** — 超时时保留 entry 还是回滚？与 FR-8 的语义冲突
-- [ ] **G-9: UTF-8 编码约束** — 显式声明 `.bean` 文件读写强制 UTF-8
-- [ ] **G-10: routing-registry dispatch 伪代码** — 未建模 Homebox（durable 场景）和并行依赖关系
-- [ ] **G-11: Liabilities:Unknown 兜底账户** — `beancount-integration.md` 未提及该兜底账户，需补充初始化要求
-- [ ] **G-13: homebus.md 已过时** — 早期综合 spec 未随子 spec 同步更新，考虑标记 deprecated
-- [ ] **G-14: 混合品类 purchase 拆分** — consumable + durable 混合时 Beancount 分录如何分拆
+- [ ] git commit 钩子只打 log，未调 `promptAsync` 触发 drift check
+- [ ] 缺少 `file.write`/`file.edit` 事件监听
 
 ---
 
-## 🟡 支付方式 vs 购买渠道解耦
+## 🟢 Beancount 集成 spec 剩余 gap（低优先级）
 
-账本调研发现：现有 routing registry 的 `store` 维度隐含了"一个商店=一个负债账户"，但实际账本中支付方式和商店是解耦的：
-
-| 概念 | 示例 | routing registry 现状 |
-|------|------|---------------------|
-| 在哪买的（store）| "京东"、"美团" | 映射到负债账户（`Liabilities:CreditCard:JD`） |
-| 怎么付的（payment）| `Assets:Cash:WeChatPay`、`Liabilities:Card:CMB`、`Assets:Charged:Eshop:MeituanEnterprise` | 未建模 |
-
-**需要确定**：
-
-- [ ] `store` 维度保留但语义修正为"渠道"（记录在哪买的，供统计分析）
-- [ ] 新增 `payment_method` 字段，Agent 在 purchase 事件中同时传 `store` 和 `payment`
-- [ ] routing registry 渠道路由：`store` 用于信息标注，`payment_method` 用于 Beancount 负债账户映射
-
-**影响**: `event-types.md` purchase 字段模型、`routing-registry.md` 渠道路由建模
-
----
-
-## 🟡 Entry 级别 item: 元数据生成
-
-现有账本已在用 `item:` 和 `gift_to:` 做分量级标注。HomeBus 生成的 purchase entry 应同步携带：
-
-```beancount
-Expenses:Food:Groceries  60.00 CNY
-    item: "蒙牛纯牛奶"
-Expenses:Household:Cleaning  45.00 CNY
-    item: "洗衣液"
-```
-
-**需要确定**：
-
-- [ ] `beancount-integration.md` entry 格式示例中补充 `item:` meta
-- [ ] Beancount Adapter 生成分录时，从 Event 的 `items[].name` 提取 `item:` meta
-- [ ] 多 item 合并到同一科目时（如两件 consumable 都走 `Expenses:Food:Groceries`），`item:` 如何标注？
-
-**影响**: `beancount-integration.md` entry 格式、`homebus/adapters/beancount.py` 生成逻辑
+- [ ] G-6: 文件初始化行为（首次创建 `homebus-MM.bean` 的目录/文件头）
+- [ ] G-7: 文件锁细节（`asyncio.Lock` 已决策，需写死细节）
+- [ ] G-8: bean-check 超时行为（超时=回滚，需写死）
+- [ ] G-9: UTF-8 编码约束（显式声明）
+- [ ] G-10: routing-registry dispatch 伪代码补 Homebox 建模
+- [ ] G-11: `Liabilities:Unknown` 兜底账户初始化要求
+- [ ] G-13: `homebus.md` 标记 deprecated
+- [ ] PRD 模块清单补 `beancount_writer.py` + `registry.py`
