@@ -2,7 +2,7 @@
 
 > 状态标记: 🔴 阻塞级 · 🟡 重要 · 🟢 优化
 > 更新: 2026-07-23
-> 已决策 (P0+P1): 数据库Schema ✅ · 事件状态机 ✅ · SubTask模型 ✅ · Adapter Action ✅ · API契约 ✅ · CLI规范 ✅ · 幂等路径 ✅ · async集成 ✅ · Saga补偿推导 ✅ · 配置模型 ✅ · Beancount元数据 ✅ (→ [doc/specs/](doc/specs/))
+> 已决策 (P0+P1+P2): 数据库Schema ✅ · 事件状态机 ✅ · SubTask模型 ✅ · Adapter Action ✅ · API契约 ✅ · CLI规范 ✅ · 幂等路径 ✅ · async集成 ✅ · Saga补偿推导 ✅ · 配置模型 ✅ · Beancount元数据 ✅ · 混合品类 ✅ · 补偿语义 ✅ · Grocy fail-fast ✅ · Homebox 幂等删除 ✅ (→ [doc/specs/](doc/specs/))
 
 ---
 
