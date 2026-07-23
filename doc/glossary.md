@@ -24,10 +24,10 @@ related:
 | 调谐引擎 | — | Reconciliation Engine——定期对比事件日志期望状态与后端实际状态，自动修复差异的守护模块 | HomeBus 内部 | [specs/homebus.md](specs/homebus.md) |
 | 观测面 | — | Observation——HomeBus 在三后端之上架设的统一抽象层。对应自然语言概念（如"零食"、"厨房"），通过 `homebus query observation <name>` 获取跨系统聚合结果。⚠️ v0.2 规划。 | HomeBus 核心 (v0.2) | [specs/routing-registry.md](specs/routing-registry.md) |
 | 路由注册表 | — | Routing Registry——品类/渠道路由规则的配置中心。存储为 TOML 文件（`~/.config/homebus/registry.toml`），Dispatch Engine 事件分发时查询获取默认位置、科目、负债账户。 | HomeBus 内部 | [specs/routing-registry.md](specs/routing-registry.md) |
-| Beancount Meta 字段 | — | `event:` 和 `homebus:` 两个元数据标签。`event:` 携带 HomeBus Event ID 用于幂等去重，`homebus: true` 标记分录来源为 HomeBus 自动生成。 | Beancount 集成 | [specs/beancount-integration.md](specs/beancount-integration.md) |
+| Beancount Meta 字段 | — | `homebus_event:` 和 `homebus_time:` 两个元数据标签。`homebus_event:` 携带 HomeBus Event ID 用于幂等去重。配合 `#homebus` tag 标记分录来源。 | Beancount 集成 | [specs/beancount-integration.md](specs/beancount-integration.md) |
 | `bean-check` | — | Beancount 官方校验命令，用于验证 `.bean` 文件语法的正确性。HomeBus 每次写入后自动执行，失败则回滚。 | Beancount 集成 | [specs/beancount-integration.md](specs/beancount-integration.md) |
 | 记账分录 | — | Journal Entry，Beancount 中单笔交易的最小记录单位，包含日期、收款方、叙述、过账条目和元数据（meta fields）。 | Beancount 集成 | [specs/beancount-integration.md](specs/beancount-integration.md) |
-| 幂等写入 | — | 写入前先扫描目标文件，检查 `event:` meta 字段是否已存在。已存在则跳过不重复写入，防止 Agent 重试导致重复记录。 | 数据持久化 | [specs/beancount-integration.md](specs/beancount-integration.md) |
+| 幂等写入 | — | 写入前先扫描目标文件，检查 `homebus_event:` meta 字段是否已存在。已存在则跳过不重复写入，防止 Agent 重试导致重复记录。 | 数据持久化 | [specs/beancount-integration.md](specs/beancount-integration.md) |
 | 纠偏 | — | 用户对 Agent 分类结果的修正操作，触发撤销旧记录、重建正确记录 | Agent 分类 | [specs/homebus.md](specs/homebus.md) |
 | 消耗品 | — | 食品、日化、电池、猫砂等日常消耗物品。**特征**：使用后消失、不能二次销售、无需精细位置追踪。购买时直接费用化，库存由 Grocy 管理。 | 物品分类 | [specs/backend-boundaries.md](specs/backend-boundaries.md) |
 | 资产 | — | 耐用品——洗衣机、手机、沙发、工具等。**特征**：可多次使用、可能卖出/转赠、需要精确位置追踪。Beancount 可记为资产账户，Homebox 管理物理位置。 | 物品分类 | [specs/backend-boundaries.md](specs/backend-boundaries.md) |

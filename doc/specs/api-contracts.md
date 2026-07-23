@@ -244,7 +244,7 @@ class QueryRequest(BaseModel):
 {
   "found": true,
   "event_id": "evt_sess1_001",
-  "entry": "2026-07-23 * \"京东\" \"蒙牛纯牛奶 x3\"\n  Expenses:Food:Groceries  60.00 CNY\n  Liabilities:CreditCard:JD  -60.00 CNY\n  event: \"evt_sess1_001\"\n  homebus: true",
+  "entry": "2026-07-23 * \"京东\" \"蒙牛纯牛奶 x3\" #homebus\n  homebus_event: \"evt_sess1_001\"\n  homebus_time: \"2026-07-23T10:00:00\"\n  Expenses:Food:Groceries  60.00 CNY\n    item: \"蒙牛纯牛奶\"\n  Liabilities:CreditCard:JD  -60.00 CNY",
   "file": "~/ledger/2025/0-default/homebus-07.bean",
   "line": 5
 }
