@@ -31,7 +31,7 @@ related:
 | HomeBus API Server | FastAPI 启动时读取后端地址、数据库路径等 |
 | HomeBus CLI | Click 命令需要知道 API Server 地址 |
 | Grocy Adapter | API 地址 + API Key |
-| Beancount Adapter | API 地址（fava）或文件路径 |
+| Beancount Adapter | API 地址（fava，读取）或文件路径（写入） |
 | Homebox Adapter | API 地址 + Token |
 
 ## 设计原则
@@ -105,9 +105,9 @@ base_url = "http://localhost:9283"        # (env: GROCY_API_URL)
 # api_key 通过环境变量 GROCY_API_KEY 注入
 
 [adapters.beancount]
-mode = "fava"            # 接入模式: fava | file
-fava_url = "http://localhost:5000"      # (env: BEANCOUNT_FAVA_URL)
-bean_file = "~/path/to/your/main.bean"      # 文件模式路径 (env: BEANCOUNT_FILE)
+mode = "fava"            # 读取模式: fava (v0.2+)
+ledger_path = "~/ledger" # 账本仓库根路径，供 CLI write 默认使用 (env: BEANCOUNT_LEDGER_PATH)
+fava_url = "http://localhost:5000"      # Fava 只读查询地址 (env: BEANCOUNT_FAVA_URL)
 # 如无需认证可省略 token
 
 [adapters.homebox]
@@ -143,8 +143,8 @@ HOMEBOX_TOKEN=xxx
 | `adapters.grocy.base_url` | `GROCY_API_URL` | Grocy 地址 |
 | — | `HOMEBOX_TOKEN` | **敏感** Homebox Token |
 | `adapters.homebox.base_url` | `HOMEBOX_API_URL` | Homebox 地址 |
-| `adapters.beancount.fava_url` | `BEANCOUNT_FAVA_URL` | Fava 地址 |
-| `adapters.beancount.bean_file` | `BEANCOUNT_FILE` | Bean 文件路径 |
+| `adapters.beancount.fava_url` | `BEANCOUNT_FAVA_URL` | Fava 只读地址 |
+| `adapters.beancount.ledger_path` | `BEANCOUNT_LEDGER_PATH` | 账本仓库根路径 |
 | `cli.api_url` | `HOMEBUS_CLI_URL` | CLI 连接地址 |
 | `cli.timeout` | `HOMEBUS_CLI_TIMEOUT` | CLI 超时 |
 

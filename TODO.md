@@ -8,15 +8,15 @@
 
 ## 🟡 Beancount 接入方式
 
-Beancount 的写入路径。Fava（目前 PRD 推荐的接入方式）是只读的。
+Beancount 的写入路径。
 
-**需要确定**：
+**已决策** (→ [doc/specs/beancount-integration.md](doc/specs/beancount-integration.md))：
 
-- [ ] 写入方式：直接追加 `.bean` 文件？通过 `bean-extract` 管道？其他方式？
-- [ ] 读取方式：Fava API 只读查询？还是也解析 `.bean` 文件？
-- [ ] 文件路径如何传递给 HomeBus（配置项 `adapters.beancount.bean_file`）
-
-**影响**: `homebus/adapters/beancount.py` 实现方案
+- [x] 写入方式：CLI 命令 `homebus beancount write`，生成 `.bean` 分录文本
+- [x] 文件隔离：HomeBus 写入 `{ledger}/{YYYY}/homebus-{MM}.bean`，不碰用户手写文件
+- [x] Git 同步：写入后自动 `git add` + `git commit`
+- [x] 幂等：扫描已有 `event:` meta 字段去重
+- [x] 校验：写入后 `bean-check`，失败回滚
 
 ---
 

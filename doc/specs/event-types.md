@@ -10,6 +10,7 @@ related:
   c4-core: "../c4/component-core.md"
   prd-us1: "../prd/homebus-v0.1.md#US-1"
   prd-us4: "../prd/homebus-v0.1.md#US-4"
+  beancount-integration: "beancount-integration.md"
 ---
 
 # HomeBus 事件类型定义与推导规则 — Specification
@@ -133,7 +134,7 @@ reference                     — 外部引用 ID
 │                            │
 │  ┌──────────────────────┐ │
 │  │ Beancount 记支出      │ │
-│  │ POST accounts/add    │ │  ← 所有 items 合计一笔
+│  │ .bean 文件写入         │ │  ← Adapter 生成分录文本，CLI write 执行 I/O
 │  └──────────────────────┘ │
 │                            │
 │  ┌──────────────────────┐ │
@@ -155,8 +156,8 @@ reference                     — 外部引用 ID
 | 事件校验不通过 | 返回 400，事件不写入 | 否 |
 | Grocy 加库存失败 | 事件标记失败，不继续 | 否（无任何操作已执行） |
 | Beancount 记支出失败 | 自动补偿：回滚 Grocy 库存 | 是 |
-| Homebox 创建资产失败 | 自动补偿：回滚 Grocy 库存 | 是 |
-| 两者都失败 | 自动补偿：回滚 Grocy 库存 | 是 |
+| Homebox 创建资产失败 | 自动补偿：回滚 Grocy 库存；若 Beancount 已成功则同时回滚 Beancount 分录 | 是 |
+| 两者都失败 | 自动补偿：回滚 Grocy 库存；若 Beancount 已成功则同时回滚 Beancount 分录 | 是 |
 
 ### consume
 

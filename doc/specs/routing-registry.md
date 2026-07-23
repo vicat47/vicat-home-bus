@@ -10,6 +10,7 @@ related:
   event-types: "event-types.md"
   c4-core: "../c4/component-core.md"
   roadmap: "../../ROADMAP.md"
+  beancount-integration: "beancount-integration.md"
 ---
 
 # 路由注册表 — Routing Registry Specification

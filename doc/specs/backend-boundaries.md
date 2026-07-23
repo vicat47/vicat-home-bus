@@ -11,6 +11,7 @@ related:
   routing-registry: "routing-registry.md"
   glossary: "../glossary.md"
   agents: "../../AGENTS.md"
+  beancount-integration: "beancount-integration.md"
 ---
 
 # HomeBus 后端定位与领域边界
