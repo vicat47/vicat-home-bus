@@ -279,7 +279,11 @@ class HealthResponse(BaseModel):
 // 全部健康
 {
   "status": "healthy",
-  "adapters": {"grocy": "ok", "beancount": "ok", "homebox": "ok"}
+  "adapters": {
+    "grocy": "ok",
+    "beancount": {"status": "ok", "detail": "bean-check v2.3.6"},
+    "homebox": "ok"
+  }
 }
 
 // 部分不可用（HTTP 200，不在状态码上报错）
@@ -287,7 +291,7 @@ class HealthResponse(BaseModel):
   "status": "degraded",
   "adapters": {
     "grocy": "ok",
-    "beancount": "ok",
+    "beancount": {"status": "ok", "detail": "bean-check v2.3.6"},
     "homebox": "error"
   }
 }
