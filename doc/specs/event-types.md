@@ -11,6 +11,8 @@ related:
   prd-us1: "../prd/homebus-v0.1.md#US-1"
   prd-us4: "../prd/homebus-v0.1.md#US-4"
   beancount-integration: "beancount-integration.md"
+  database-schema: "database-schema.md"
+  adapter-interfaces: "adapter-interfaces.md"
 ---
 
 # HomeBus 事件类型定义与推导规则 — Specification
@@ -241,7 +243,147 @@ HomeBus API: POST /v1/events
        │
        ▼
 Agent: homebus status --event-id <id>
-       ├─ success     → 告知用户
-       ├─ compensated → 告知用户部分失败已回滚
-       └─ failed      → 告知用户并提供错误详情
+        ├─ success     → 告知用户
+        ├─ compensated → 告知用户部分失败已回滚
+        └─ failed      → 告知用户并提供错误详情
 ```
+
+## 事件状态机
+
+### 状态定义
+
+| 状态 | 含义 | 谁设置 |
+|------|------|--------|
+| `pending` | 已写入 events 表，等待后台调度 | Writer（`api.py`） |
+| `executing` | 后台开始执行子任务 | Dispatch（`dispatch.py`） |
+| `success` | 所有子任务成功 | Aggregator（`aggregator.py`） |
+| `compensated` | 部分失败已自动补偿回滚 | Aggregator（`aggregator.py`） |
+| `failed` | 执行失败且无法补偿 | Aggregator（`aggregator.py`） |
+
+### 状态转换
+
+```
+           POST /v1/events
+                │
+          Schema 校验
+          ┌─────┴─────┐
+          ▼             ▼
+       通过          不通过 → 400（不写 DB）
+          │
+          ▼
+    INSERT events (status=pending)
+          │
+          ▼
+    API 响应 {event_id, status: "pending"}
+          │
+          ▼  ← BackgroundTask 异步触发
+    Dispatch 推导子任务
+          │
+    UPDATE events SET status='executing'
+          │
+          ▼
+    Executor 执行子任务（逐层 DAG）
+          │
+    ┌─────┼──────────┐
+    ▼     ▼          ▼
+  全成功 部分失败   全部失败
+    │     │          │
+    ▼     ▼          ▼
+ success Saga补偿   failed
+          │
+    ┌─────┼──────────┐
+    ▼     ▼
+  补偿   补偿
+  成功   失败
+    │     │
+    ▼     ▼
+compensated failed
+```
+
+### 状态与 API 响应对照
+
+| DB status | GET /v1/events/{id} 返回 | 说明 |
+|-----------|-------------------------|------|
+| `pending` | `{event_id, status: "pending"}` | Agent 需轮询等待 |
+| `executing` | `{event_id, status: "executing"}` | Agent 需继续轮询 |
+| `success` | `{event_id, status: "success", executions: [...]}` | 终态 |
+| `compensated` | `{event_id, status: "compensated", executions: [...]}` | 终态 |
+| `failed` | `{event_id, status: "failed", executions: [...]}` | 终态 |
+
+> **注意**：API 响应中的 `status` 字段直接使用 DB 值，不翻译。之前部分文档使用 `"accepted"` 作为概念性描述，**已废弃**——统一使用 `"pending"`。DB initial value = `"pending"`，API response status = DB status。
+
+### 约束
+
+- **非终态→终态不可逆**：`success`/`compensated`/`failed` 不可再变为其他状态
+- **Saga 补偿**：执行成功→创建 `is_compensation=1` 的 execution 记录；原 execution 的 status 从 `success` 更新为 `compensated`
+- **幂等重试**：同一个 event_id 的 `POST` 请求返回已有 DB 状态（200，非错误）
+
+
+## SubTask 数据模型
+
+### 定义
+
+```python
+from dataclasses import dataclass, field
+from typing import Literal
+
+@dataclass
+class SubTask:
+    seq: int                              # 序号（Dispatch 分配，从 0 开始）
+    service: Literal["grocy", "beancount", "homebox"]
+    action: str                           # 如 "add_stock"、"record_expense"、"create_asset"
+    params: dict                          # 传递给 Adapter.execute() 的参数
+    depends_on: list[int] = field(default_factory=list)  # 依赖的 seq 列表
+    timeout: float = 30.0                 # 超时（秒）
+    max_retries: int = 3                  # 最大重试次数
+```
+
+### 字段说明
+
+| 字段 | 类型 | 说明 |
+|------|------|------|
+| `seq` | int | Dispatch Engine 分配的子任务序号。Executor 用此序号建立 DAG |
+| `service` | Literal | 目标后端 |
+| `action` | str | 操作名称，对应 Adapter 的 action catalog（见 [adapter-interfaces.md](adapter-interfaces.md)）|
+| `params` | dict | 操作参数，由 Dispatch 从 Event + routing registry 拼装 |
+| `depends_on` | list[int] | 依赖的子任务 seq 列表。空列表=无依赖（可与其他同层子任务并行） |
+| `timeout` | float | 子任务执行超时，默认 30s |
+| `max_retries` | int | 失败后最大重试次数 |
+
+### depends_on 示例
+
+```
+purchase(consumable) 事件:
+
+  seq=0: Grocy add_stock     depends_on=[]    ← L0（无依赖）
+  seq=1: Beancount record_expense depends_on=[0]  ← L1（依赖 Grocy 先成功）
+
+purchase(durable) 事件:
+
+  seq=0: Grocy add_stock     depends_on=[]
+  seq=1: Beancount record_expense depends_on=[0]  ← L1（与 seq=2 并行）
+  seq=2: Homebox create_asset  depends_on=[0]      ← L1（与 seq=1 并行）
+
+consume 事件:
+
+  seq=0: Grocy consume_stock depends_on=[]    ← 单项，无依赖
+```
+
+### Executor DAG 执行算法
+
+```
+1. Parse SubTask[].depends_on → Build DAG
+2. Topological sort → layers [L0, L1, ..., Ln]
+3. For each layer Li:
+   a. Execute all subtasks in Li concurrently (asyncio.gather)
+   b. If any subtask in Li fails:
+      - Cancel remaining in-flight subtasks in Li
+      - Do NOT proceed to Li+1
+      - Trigger Saga compensator for all successful subtasks in L0..Li
+   c. If all succeed, proceed to Li+1
+4. If all layers complete → Aggregator sets status='success'
+```
+
+## 多 item 约束
+
+purchase 事件中所有 `items` **必须属于同一 category**（全部 consumable 或全部 durable）。如需混合品类，Agent 应拆为两个独立的 purchase 事件。Validator 负责在校验阶段拒绝混合品类的事件。

@@ -13,6 +13,8 @@ specs/
 ├── backend-boundaries.md   # 后端边界规范
 ├── sensitive-data.md       # 敏感数据处理规范
 ├── beancount-integration.md # Beancount 集成方案
+├── database-schema.md       # 数据库 Schema
+├── adapter-interfaces.md    # Adapter 接口规范
 └── README.md               # 本文件
 ```
 
@@ -27,6 +29,8 @@ specs/
 | [backend-boundaries.md](backend-boundaries.md) | 后端边界规范 | draft | 2026-07-20 |
 | [sensitive-data.md](sensitive-data.md) | 敏感数据处理规范 | draft | 2026-07-21 |
 | [beancount-integration.md](beancount-integration.md) | Beancount 集成方案 | draft | 2026-07-23 |
+| [database-schema.md](database-schema.md) | 数据库 Schema | draft | 2026-07-23 |
+| [adapter-interfaces.md](adapter-interfaces.md) | Adapter 接口规范 | draft | 2026-07-23 |
 
 ## 如何创建新规格
 
