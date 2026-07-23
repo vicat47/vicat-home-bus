@@ -1,7 +1,7 @@
 # INDEX: HomeBus 文档索引
 
 > 最后更新: 2026-07-23
-> `doc/` 下非索引文档总数: 22
+> `doc/` 下非索引文档总数: 23
 
 本文档提供项目资产的分层索引，支持 agent 渐进式上下文加载。
 
@@ -9,7 +9,7 @@
 
 | 类别 | 路径 | 文档数 | 状态 |
 |------|------|--------|------|
-| 规格说明 | `doc/specs/` | 11 | homebus.md + config-paradigm.md + event-types.md + routing-registry.md + backend-boundaries.md + sensitive-data.md + beancount-integration.md + database-schema.md + adapter-interfaces.md + api-contracts.md + cli-spec.md ✅ |
+| 规格说明 | `doc/specs/` | 12 | homebus.md + config-paradigm.md + event-types.md + routing-registry.md + backend-boundaries.md + sensitive-data.md + beancount-integration.md + database-schema.md + adapter-interfaces.md + api-contracts.md + cli-spec.md + architecture-planes.md ✅ |
 | 术语表 | `doc/glossary.md` | — | 固定文件 |
 | ADR | `doc/adr/` | 0 | 目录暂未初始化，按需 `mkdir doc/adr` |
 | C4 模型 | `doc/c4/` | 5 + 图例 | 文字描述 ✅ |

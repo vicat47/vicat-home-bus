@@ -17,6 +17,7 @@ specs/
 ├── adapter-interfaces.md    # Adapter 接口规范
 ├── api-contracts.md         # API 契约
 ├── cli-spec.md              # CLI 规范
+├── architecture-planes.md   # 架构平面定义
 └── README.md               # 本文件
 ```
 
@@ -35,6 +36,7 @@ specs/
 | [adapter-interfaces.md](adapter-interfaces.md) | Adapter 接口规范 | draft | 2026-07-23 |
 | [api-contracts.md](api-contracts.md) | API 契约 | draft | 2026-07-23 |
 | [cli-spec.md](cli-spec.md) | CLI 规范 | draft | 2026-07-23 |
+| [architecture-planes.md](architecture-planes.md) | 架构平面定义 | draft | 2026-07-23 |
 
 ## 如何创建新规格
 
