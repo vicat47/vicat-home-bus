@@ -85,3 +85,12 @@ MVP 测试方案。
 - [ ] Adapter 测试：mock 还是 real API？
 - [ ] 端到端测试：启动 HomeBus → 调用 CLI → 验证后端？
 - [ ] CI/CD：GitHub Actions ？发布流水线？
+
+---
+
+## 🟡 doc-drift-hook plugin 触发 gap
+
+`.opencode/plugins/doc-drift-hook.ts` 存在两个 gap：
+
+- [ ] **git commit 钩子空转**：`tool.execute.before` 检测到 git commit 后只打 log，未调用 `client.session.promptAsync` 触发 drift check（与 `session.idle` 里的逻辑脱节）
+- [ ] **缺少文档写入事件监听**：当前只监听 `session.idle`（每 5 次空闲触发），缺少 `file.write` / `file.edit` 事件钩子。文档变更后无法立即感知，只能等 periodic 检查
