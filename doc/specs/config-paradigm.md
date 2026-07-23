@@ -332,29 +332,106 @@ services:
 ```python
 # homebus/config.py
 
+from pydantic import BaseModel, Field
+from typing import Literal, Optional
+from pathlib import Path
+
+class ApiConfig(BaseModel):
+    host: str = "0.0.0.0"
+    port: int = Field(default=8080, ge=1024, le=65535)
+    debug: bool = False
+
+class DatabaseConfig(BaseModel):
+    path: str = "~/.local/share/homebus/data.db"
+
+class GrocyConfig(BaseModel):
+    base_url: str = "http://localhost:9283"
+    # api_key 只从环境变量 GROCY_API_KEY 注入，不在 TOML 中
+
+class BeancountConfig(BaseModel):
+    mode: Literal["fava", "file"] = "fava"
+    ledger_path: str = "~/ledger"
+    fava_url: str | None = "http://localhost:5000"
+
+class HomeboxConfig(BaseModel):
+    base_url: str = "http://localhost:7745"
+    # token 只从环境变量 HOMEBOX_TOKEN 注入，不在 TOML 中
+
+class AdaptersConfig(BaseModel):
+    grocy: GrocyConfig = Field(default_factory=GrocyConfig)
+    beancount: BeancountConfig = Field(default_factory=BeancountConfig)
+    homebox: HomeboxConfig = Field(default_factory=HomeboxConfig)
+
+class CliConfig(BaseModel):
+    api_url: str = "http://localhost:8080"
+    timeout: float = 30.0
+
 class HomeBusConfig(BaseModel):
-    """全局配置模型，Pydantic 校验"""
-    ...
+    api: ApiConfig = Field(default_factory=ApiConfig)
+    database: DatabaseConfig = Field(default_factory=DatabaseConfig)
+    adapters: AdaptersConfig = Field(default_factory=AdaptersConfig)
+    cli: CliConfig = Field(default_factory=CliConfig)
+
+    # 敏感字段由环境变量注入，不进入 Pydantic model（从 os.environ 直接读取）:
+    #   GROCY_API_KEY  →  Grocy Adapter
+    #   HOMEBOX_TOKEN  →  Homebox Adapter
+```
+
+### 加载函数
+
+```python
+import tomllib
+import os
+from pathlib import Path
+from typing import Optional
 
 def load_config(
     config_path: Optional[Path] = None,
-    env_prefix: str = "HOMEBUS_",
     cli_overrides: Optional[dict] = None,
 ) -> HomeBusConfig:
-    """分层加载配置：默认值 < TOML < 环境变量 < CLI"""
-    ...
+    """分层加载：默认值 < TOML < 环境变量 < CLI"""
+    config = HomeBusConfig()  # 默认值
+
+    # 2. TOML 覆盖
+    if config_path is None:
+        config_path = discover_config_path()
+    if config_path and config_path.exists():
+        with open(config_path, "rb") as f:
+            toml_data = tomllib.load(f)
+        config = HomeBusConfig(
+            api=ApiConfig(**toml_data.get("homebus", {}).get("api", {})),
+            database=DatabaseConfig(**toml_data.get("homebus", {}).get("database", {})),
+            adapters=AdaptersConfig(
+                grocy=GrocyConfig(**toml_data.get("adapters", {}).get("grocy", {})),
+                beancount=BeancountConfig(**toml_data.get("adapters", {}).get("beancount", {})),
+                homebox=HomeboxConfig(**toml_data.get("adapters", {}).get("homebox", {})),
+            ),
+            cli=CliConfig(**toml_data.get("cli", {})),
+        )
+
+    # 3. 环境变量覆盖
+    config.api.host = os.environ.get("HOMEBUS_HOST", config.api.host)
+    config.api.port = int(os.environ.get("HOMEBUS_PORT", str(config.api.port)))
+    config.database.path = os.environ.get("HOMEBUS_DB_PATH", config.database.path)
+    config.adapters.grocy.base_url = os.environ.get("GROCY_API_URL", config.adapters.grocy.base_url)
+    config.adapters.homebox.base_url = os.environ.get("HOMEBOX_API_URL", config.adapters.homebox.base_url)
+    config.adapters.beancount.fava_url = os.environ.get("BEANCOUNT_FAVA_URL", config.adapters.beancount.fava_url)
+    config.adapters.beancount.ledger_path = os.environ.get("BEANCOUNT_LEDGER_PATH", config.adapters.beancount.ledger_path)
+    config.cli.api_url = os.environ.get("HOMEBUS_CLI_URL", config.cli.api_url)
+
+    # 4. CLI 参数覆盖（最高优先级）
+    if cli_overrides:
+        for key, value in cli_overrides.items():
+            if hasattr(config, key):
+                setattr(config, key, value)
+
+    return config
+
 
 def discover_config_path() -> Path:
     """XDG 配置发现"""
-    ...
-
-def find_config() -> Optional[Path]:
-    """按优先级搜索配置文件"""
-    ...
-
-def validate_config(config: HomeBusConfig) -> list[str]:
-    """校验配置合规性，返回错误列表"""
-    ...
+    xdg_home = os.environ.get("XDG_CONFIG_HOME", str(Path.home() / ".config"))
+    return Path(xdg_home) / "homebus" / "config.toml"
 ```
 
 ## Open Questions
