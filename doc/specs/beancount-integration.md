@@ -33,7 +33,7 @@ related:
 | 幂等 | 写入前扫描目标文件查已有 `event:` meta 字段 |
 | 校验 | 写入后自动运行 `bean-check` |
 | Git | 写入成功后 `git add` + `git commit`（flag 控制） |
-| Saga 回滚 | 删除对应 entry + `git revert` |
+| Saga 回滚 | 从 `homebus-MM.bean` 删除对应 entry 的行 + 新 git commit（非 git revert） |
 
 ## Requirements
 
@@ -48,9 +48,10 @@ related:
 - **FR-7**: 写入后自动调用 `bean-check` 校验账本完整性
 - **FR-8**: `bean-check` 失败则回滚本次写入（删除刚追加的 entry）
 - **FR-9**: 写入成功后执行 `git add {homebus-file}` + `git commit`（默认行为，可通过 `--no-auto-commit` 禁用）
-- **FR-10**: Saga 回滚——补偿时删除对应 Beancount entry 并执行 `git revert`
+- **FR-10**: Saga 回滚——补偿时删除 `homebus-MM.bean` 中对应 event_id 的 entry 行，执行 `bean-check` 验证完整性，然后 `git add` + `git commit`（非 `git revert`，避免与其他 commit 产生合并冲突）
 - **FR-11**: 支持 `--dry-run` 模式只生成 entry 文本不写入
-- **FR-12**: Beancount 读取走 Fava REST API（供观测面查询用，v0.2）
+- **FR-12**: MVP 查询——提供 `verify_entry` 操作：按 `event_id` 在 `homebus-MM.bean` 中查找对应 entry，返回 `{found, entry, file, line}`。供 Agent 轮询确认和集成测试断言。实现为 `beancount_writer.read_entry(event_id, ledger_path)`
+- **FR-13**: v0.2 完整查询——通过 Fava REST API 支持余额查询、账目查询、科目聚合等
 
 ### Non-Functional Requirements
 
@@ -70,17 +71,13 @@ Agent ──→ homebus publish ...
                │
                ├─ Grocy Adapter (HTTP)
                ├─ Homebox Adapter (HTTP)
-               └─ Beancount Adapter
+               └─ Beancount Adapter (生成分录文本)
                       │
-                      │ 生成 .bean 分录文本
-                      │ 作为 SubTask 返回给 Executor
                       ▼
-           homebus beancount write \
-             --file ~/ledger/2026/homebus-07.bean \
-             --entries '[...]'
+           beancount_writer.py (import)
                       │
                       ├─ 幂等检查（扫描已有 event:）
-                      ├─ 追加 entry
+                      ├─ 追加 entry 到 homebus-MM.bean
                       ├─ bean-check ✅ / ❌ → 回滚
                       └─ git add + commit
 ```
@@ -144,44 +141,43 @@ Beancount 时间精度到天。同一天的多笔交易各自对应独立的 ent
   if ok → git add + commit, return success
 ```
 
-### CLI 接口
+### MVP 查询能力
 
-```bash
-# 基本用法
-homebus beancount write \
-  --ledger-path ~/ledger \
-  --date 2026-07-23 \
-  --entries '[
-    {
-      "event_id": "evt_sess1_001",
-      "payee": "京东",
-      "narration": "蒙牛纯牛奶 x3",
-      "postings": [
-        {"account": "Expenses:Food:Groceries", "amount": "60.00 CNY"},
-        {"account": "Liabilities:CreditCard:JD", "amount": "-60.00 CNY"}
-      ]
-    }
-  ]'
+MVP 通过 `POST /v1/query` 提供最小 Beancount 查询——按 event_id 验证写入：
 
-# --dry-run 模式
-homebus beancount write --dry-run ...
+```json
+POST /v1/query
+{
+  "target": "beancount",
+  "operation": "verify_entry",
+  "params": {"event_id": "evt_sess1_001"}
+}
 
-# 禁用自动 commit
-homebus beancount write --no-auto-commit ...
+// 找到
+{
+  "found": true,
+  "event_id": "evt_sess1_001",
+  "entry": "2026-07-23 * \"京东\" \"蒙牛纯牛奶 x3\"\n  Expenses:Food:Groceries  60.00 CNY\n  Liabilities:CreditCard:JD  -60.00 CNY\n  event: \"evt_sess1_001\"\n  homebus: true",
+  "file": "~/ledger/2026/homebus-07.bean",
+  "line": 5
+}
 
-# 从 stdin 读取
-echo '[{...}]' | homebus beancount write --stdin --ledger-path ~/ledger
+// 未找到
+{
+  "found": false,
+  "event_id": "evt_sess1_001"
+}
 ```
 
-| 参数 | 类型 | 必填 | 说明 |
-|------|------|------|------|
-| `--ledger-path` | path | ✅ | Beancount 仓库根路径 |
-| `--date` | date | ✅ | 交易日期，决定写入 `{path}/{YYYY}/homebus-{MM}.bean` |
-| `--entries` | JSON | ✅ | 分录数组 |
-| `--stdin` | flag | 否 | 从 stdin 读取 entries JSON |
-| `--dry-run` | flag | 否 | 生成 entry 文本但不写入 |
-| `--no-auto-commit` | flag | 否 | 写入但不 git commit |
-| `--no-bean-check` | flag | 否 | 跳过 `bean-check` |
+实现方式：`beancount_writer.py` 提供 `read_entry(event_id, ledger_path)` → 扫描当年月的所有 `homebus-MM.bean` 文件，按 `event:` meta 字段匹配。不做 Fava 集成、不做 `bean-query`。
+
+v0.2 的完整查询（余额查询、账目查询、科目聚合）走 Fava REST API，届时 `operation` 扩展为 `balance`、`account_report` 等。
+
+| 操作 | 版本 | 查询方式 |
+|------|------|---------|
+| `verify_entry` | v0.1 | 文件扫描 `event:` meta |
+| `balance` | v0.2 | Fava REST API |
+| `account_report` | v0.2 | Fava REST API |
 
 ### 错误处理
 
@@ -236,14 +232,31 @@ echo '[{...}]' | homebus beancount write --stdin --ledger-path ~/ledger
 
 ## Implementation Details
 
-### 与 HomeBus Adapter 的关系
+### 模块架构
 
-Beancount Adapter（`homebus/adapters/beancount.py`）的职责是**生成** `.bean` 分录文本——将 Event 的字段映射为 Beancount 语法。实际的**文件 I/O** 由 `homebus beancount write` CLI 命令负责。
+Beancount 写入链路不通过 CLI — Task Executor 直接 import 共享库：
 
-| 组件 | 职责 |
-|------|------|
-| `homebus/adapters/beancount.py` | entry 文本生成、powertesting（生成 bean-check 可编译的分录） |
-| `cli/beancount.py` | 文件 I/O、幂等扫描、bean-check 调度、git 操作 |
+```
+homebus/adapters/
+  beancount.py            ← 生成 .bean 分录文本（Event → Beancount 语法）
+  beancount_writer.py     ← 文件 I/O + 幂等扫描 + bean-check + git（共享库）
+
+homebus/
+  executor.py             ← Task Executor，import beancount_writer 执行写入
+
+cli/
+  homebus.py              ← publish / query / status / health（Agent 用）
+                           （MVP 不提供 homebus beancount write 子命令）
+```
+
+| 组件 | 文件 | 职责 |
+|------|------|------|
+| Beancount Adapter | `homebus/adapters/beancount.py` | entry 文本生成、分录格式映射 |
+| Beancount Writer | `homebus/adapters/beancount_writer.py` | 文件 I/O、幂等扫描、bean-check 调度、git 操作、entry 查询 |
+| Task Executor | `homebus/executor.py` | import `beancount_writer`，执行 Beancount 写入子任务 |
+| CLI（未来扩展）| `cli/beancount.py` | 人类调试用 `homebus beancount write` 命令（thin wrapper，v0.2+）
+
+MVP 中 `cli/beancount.py` 不存在。API Server 不通过 subprocess 调用 CLI——Exec 直接 import `beancount_writer`。未来如果需要独立 CLI 命令，`cli/beancount.py` 是 `beancount_writer.py` 的薄封装，不引入额外逻辑。
 
 ### 路由注册表集成
 
@@ -272,7 +285,7 @@ purchase 事件:
 Grocy ✅ → Beancount ✅ → Homebox ❌
 
 Saga 补偿:
-  1. Beancount: 删除 homebus-MM.bean 中对应 entry + bean-check + git revert
+  1. Beancount: 从 homebus-MM.bean 删除对应 event_id 的 entry 行 + bean-check + git commit
   2. Grocy: 回滚库存
 ```
 

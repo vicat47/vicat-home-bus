@@ -178,8 +178,8 @@ Dispatch Engine 收到事件
 | 已完成的操作 | 补偿操作 |
 |-------------|---------|
 | Grocy: add_stock(item, +N) | Grocy: consume_stock(item, -N) |
-| Beancount: record_expense(acct, -CNY) | Beancount: record_correct(acct, +CNY) |
-| Beancount: record_asset(acct, +CNY) | Beancount: record_correct(acct, -CNY) |
+| Beancount: record_expense(acct, -CNY) | Beancount: delete_entry(event_id) |
+| Beancount: record_asset(acct, +CNY) | Beancount: delete_entry(event_id) |
 | Homebox: create_asset | Homebox: delete_asset / mark_removed |
 
 ### 7. 结果聚合器 (Result Aggregator)
@@ -203,7 +203,7 @@ Dispatch Engine 收到事件
 | target | 示例 | 路由目标 |
 |--------|------|---------|
 | `grocy` | `{target: "grocy", operation: "stock", params: {product_id: 5}}` | Grocy Adapter |
-| `beancount` | `{target: "beancount", operation: "balance", params: {account: "Expenses:Food"}}` | Beancount Adapter |
+| `beancount` | `{target: "beancount", operation: "verify_entry", params: {event_id: "evt_001"}}` | Beancount Adapter (v0.1: 仅 verify_entry；v0.2: balance/account_report 走 Fava) |
 | `homebox` | `{target: "homebox", operation: "assets", params: {category: "家电"}}` | Homebox Adapter |
 
 ### 9. 路由注册表 (Routing Registry) ← NEW

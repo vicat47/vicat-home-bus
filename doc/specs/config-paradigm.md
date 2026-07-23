@@ -10,6 +10,7 @@ related:
   c4-core: "../c4/component-core.md"
   c4-cli: "../c4/component-cli.md"
   rfc-001: "../rfcs/rfc-001-config-format-change.md"
+  beancount-integration: "beancount-integration.md"
 ---
 
 # HomeBus 配置文件存储范式 — Specification

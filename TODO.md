@@ -33,6 +33,20 @@ Beancount 的写入路径。
 
 **影响**: `homebus/saga.py` 实现方案
 
+- [x] 补偿策略：删除 Beancount entry 行 + 新 git commit（非 git revert）。见 [beancount-integration.md](doc/specs/beancount-integration.md) FR-10
+
+### 🟡 Saga 回滚时的 git 冲突处理
+
+当多个事件先后写入同一 `homebus-{MM}.bean` 后，Saga 回滚早期事件的 commit 时，可能与后续 commit 产生行级冲突。
+
+**需要确定**：
+
+- [ ] 每个 Beancount entry 是否独立 git commit？（推荐：是，减小冲突面）
+- [ ] git commit 冲突时降级策略：标记告警日志？放弃自动回滚改为人工介入？
+- [ ] 是否在 entry 之间保留空行/分隔注释以降低相邻行的冲突概率？
+
+**参考**: [beancount-integration.md](doc/specs/beancount-integration.md) FR-10
+
 ---
 
 ## 🟡 CLI JSON 参数传递
