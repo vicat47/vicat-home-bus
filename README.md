@@ -226,40 +226,26 @@ gantt
 > ⚠️ 当前阶段：设计完成，代码待实现。`homebus/` 和 `cli/` 下所有 `.py` 文件为骨架占位（空文件），以下命令为 v0.1 目标用法，尚不可运行。
 
 ```bash
-# 1. 安装 CLI
-pipx install homebus-cli
+# 1. 安装
+uv sync
 
-# 2. 配置后端地址
-mkdir -p ~/.config/homebus
-cat > ~/.config/homebus/config.toml << 'EOF'
-[adapters.grocy]
-base_url = "http://localhost:9283"
-
-[adapters.beancount]
-mode = "fava"
-fava_url = "http://localhost:5000"
-
-[adapters.homebox]
-base_url = "http://localhost:7745"
-EOF
-
-# 3. 注入敏感信息（API Key / Token 仅通过环境变量）
-export GROCY_API_KEY=your-key
-export HOMEBOX_TOKEN=your-token
-
-# 4. 初始化路由注册表
+# 2. 初始化配置（生成 config.toml + registry.toml + .env.example）
 homebus init
 
-# 5. 提交购买事件
-homebus publish --intent purchase --items '[{"name":"牛奶","quantity":3,"category":"consumable"}]' --total-price 60
+# 3. 编辑 ~/.config/homebus/config.toml 填写后端地址
+# 编辑 ~/.config/homebus/registry.toml 填写路由规则
+# 编辑 ~/.config/homebus/.env 填入 API Key
 
-# 6. 查询事件状态
+# 4. 提交购买事件
+homebus publish --body '{"intent":"purchase","items":[{"name":"牛奶","quantity":3,"category":"consumable","price":20}],"total_price":60}'
+
+# 5. 查询事件状态
 homebus status --event-id evt_sess1_001
 
-# 7. 查询后端
-homebus query --target grocy --operation stock_level --params '{"item":"牛奶"}'
+# 6. 查询后端
+homebus query --target grocy --operation stock_query --params '{"product_name":"牛奶"}'
 
-# 8. 健康检查
+# 7. 健康检查
 homebus health
 ```
 
@@ -271,12 +257,13 @@ Agent 通过终端工具调用 `homebus` CLI：
 # Agent skill 示例
 def buy_milk():
     """Agent 自动完成：记账 + 入库"""
-    event_id = terminal(
-        'homebus publish --intent purchase '
-        '--items \'[{"name":"牛奶","quantity":3,"category":"consumable"}]\' '
-        '--total-price 60'
+    event_json = terminal(
+        "homebus publish --body "
+        '\'{"intent":"purchase","items":'
+        '[{"name":"牛奶","quantity":3,"category":"consumable","price":20}],'
+        '"total_price":60}\''
     )
-    result = terminal(f"homebus status --event-id {event_id} --watch")
+    result = terminal(f"homebus status --event-id {event_json.event_id} --watch")
 ```
 
 v0.2 将提供 MCP Server，Agent 可直接通过 MCP tools 调用 HomeBus，无需拼装 CLI 命令。
@@ -301,17 +288,22 @@ v0.2 将提供 MCP Server，Agent 可直接通过 MCP tools 调用 HomeBus，无
 
 | 文档 | 说明 |
 |------|------|
-| [架构规格](doc/specs/homebus.md) | 完整技术规格、数据模型、API 设计 |
-| [事件类型定义](doc/specs/event-types.md) | MVP 事件类型、字段模型、子任务推导规则 |
+| [事件类型定义](doc/specs/event-types.md) | MVP 事件类型、字段模型、状态机、SubTask、子任务推导规则 |
+| [数据库 Schema](doc/specs/database-schema.md) | DDL、字段约束、索引、migration 策略 |
+| [Adapter 接口](doc/specs/adapter-interfaces.md) | AdapterBase、3 个 Adapter 的 action catalog、Saga 补偿推导 |
+| [API 契约](doc/specs/api-contracts.md) | Pydantic schemas、错误格式、4 个端点 |
+| [CLI 规范](doc/specs/cli-spec.md) | 5 个子命令、参数规范、退出码 |
+| [Beancount 集成](doc/specs/beancount-integration.md) | 写入机制、文件隔离、元数据范式、async 集成、幂等路径 |
 | [路由注册表](doc/specs/routing-registry.md) | 品类/渠道路由规则（TOML 配置） |
 | [后端边界规范](doc/specs/backend-boundaries.md) | Beancount/Grocy/Homebox 领域职责划分、三阶模型 |
-| [配置范式](doc/specs/config-paradigm.md) | 配置加载分层、目录规范、环境变量映射 |
+| [配置范式](doc/specs/config-paradigm.md) | 配置加载分层、Pydantic 模型、环境变量映射 |
 | [敏感数据处理](doc/specs/sensitive-data.md) | 仓库脱敏规则与发布前检查清单 |
 | [术语表](doc/glossary.md) | 项目专用术语定义 |
-| [C4 模型](doc/c4/) | 5 份架构视图 + 图例（上下文/容器/组件） |
+| [C4 模型](doc/c4/) | 6 份架构视图 + 图例（上下文/容器/组件） |
 | [MVP PRD](doc/prd/homebus-v0.1.md) | v0.1 产品需求文档 |
 | [RFC-001](doc/rfcs/rfc-001-config-format-change.md) | 配置格式从 YAML 变更为 TOML |
 | [RFC-002](doc/rfcs/rfc-002-pypi-publishing.md) | CLI 通过 PyPI 发布 |
 | [项目记忆](MEMORY.md) | 设计决策树、已知权衡、版本边界速查 |
 | [路线图](ROADMAP.md) | v0.1 → v1.0 规划 |
 | [AGENTS.md](AGENTS.md) | AI Agent 工作指南（架构规则） |
+| [Core Spec (superseded)](doc/specs/homebus.md) | 早期架构规格，已由上述专项 spec 取代 |
