@@ -51,7 +51,7 @@ timeline
 - [ ] Homebox Adapter
 - [ ] 路由注册表（TOML 加载 + 缓存，供 Dispatch Engine 查路由规则）
 - [ ] 查询路由
-- [ ] HomeBus CLI（publish / query / status / health）
+- [ ] HomeBus CLI（publish / query / status / health / init）
 - [ ] 端到端集成测试
 - [ ] Docker Compose 部署
 

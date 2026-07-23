@@ -92,7 +92,7 @@ related:
 **命令列表：**
 
 ```
-homebus publish      # 提交事件（购买/消耗/卖出/纠偏）
+homebus publish      # 提交事件（购买/消耗）
 homebus query        # 查询后端状态
 homebus status       # 查询事件执行状态
 homebus health       # 检查 HomeBus 健康状态
@@ -151,7 +151,7 @@ homebus_get_event_status    # 获取事件状态
 │  └───────────────────┘  │
 │                          │
 │  ┌───────────────────┐  │
-│  │  Beancount          │  │  ← 写入: CLI+文件; 读取: Fava (v0.2)
+│  │  Beancount          │  │  ← 写入: import 共享库; 读取: 文件扫描 (v0.1) / Fava (v0.2)
 │  └───────────────────┘  │
 └─────────────────────────┘
 

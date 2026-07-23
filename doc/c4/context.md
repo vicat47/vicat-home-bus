@@ -71,7 +71,7 @@ graph TB
 |----|------|------|------|------|
 | AI Agent | HomeBus | 调用 | CLI / MCP / HTTP | Agent 通过 CLI 或 MCP Server 向 HomeBus 发送事件和查询（含观测面查询） |
 | HomeBus | Grocy | 调用 | REST API | 写入库存变更，查询库存状态，观测面聚合查库存 |
-| HomeBus | Beancount | 调用 | CLI 文件写入 + Fava REST API (v0.2 读) | 写入：CLI `beancount write` 生成 .bean 文件；读取：Fava API 查余额/账目 |
+| HomeBus | Beancount | 调用 | 共享库 import (beancount_writer.py) + Fava REST API (v0.2 读) | 写入：Task Executor import beancount_writer；读取：Fava API 查余额/账目 |
 | HomeBus | Homebox | 调用 | REST API | 写入资产变更，查询资产状态，观测面聚合查资产 |
 | HomeBus CLI | HomeBus API | 调用 | HTTP (JSON) | 内部调用，Agent 不直接感知 |
 | HomeBus MCP Server | HomeBus API | 调用 | HTTP (JSON) | MCP 处理层调 HomeBus 内部 API |

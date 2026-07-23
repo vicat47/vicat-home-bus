@@ -31,7 +31,7 @@ related:
 
 | 决策 | 内容 |
 |------|------|
-| 写入方式 | CLI 命令 `homebus beancount write`，非 Adapter 内部静默操作 |
+| 写入方式 | Task Executor 通过 import `beancount_writer.py` 共享库写入，非 CLI 子进程 |
 | 文件隔离 | HomeBus 写入 `{ledger}/{YYYY}/0-default/homebus-{MM}.bean`，利用现有 `include "0-default/*"` glob 自动纳入，不触碰用户手写文件 |
 | 库结构兼容 | 支持现有按年/月分文件夹的 Beancount 仓库结构 |
 | 幂等 | 写入前扫描目标文件查已有 `homebus_event:` meta 字段 |
@@ -43,7 +43,7 @@ related:
 
 ### Functional Requirements
 
-- **FR-1**: HomeBus 提供 `homebus beancount write` CLI 命令，接受 Beancount 分录（journal entry）并追加到目标 `.bean` 文件
+- **FR-1**: HomeBus 提供 `beancount_writer.py` 共享库，供 Task Executor 直接 import 完成写入（不必通过 CLI 子进程）
 - **FR-2**: CLI 支持 `--ledger-path` 指定 Beancount 仓库根路径
 - **FR-3**: 文件隔离——HomeBus 写入 `{ledger}/{YYYY}/0-default/homebus-{MM}.bean`，利用 `YYYY.bean` 中已有的 `include "0-default/*"` glob 自动纳入，不触碰用户手写的 `{YYYY}/0-default/{MM}.bean` 等其他文件
 - **FR-4**: HomeBus 生成的 entry 携带 `#homebus` tag 标记来源
@@ -80,7 +80,7 @@ Agent ──→ homebus publish ...
                       ▼
            beancount_writer.py (import)
                       │
-                      ├─ 幂等检查（扫描已有 event:）
+                      ├─ 幂等检查（扫描已有 homebus_event:）
                       ├─ 追加 entry 到 homebus-MM.bean
                       ├─ bean-check ✅ / ❌ → 回滚
                       └─ git add + commit
@@ -209,13 +209,13 @@ POST /v1/query
 }
 ```
 
-实现方式：`beancount_writer.py` 提供 `read_entry(event_id, ledger_path)` → 扫描当年月的所有 `homebus-MM.bean` 文件，按 `event:` meta 字段匹配。不做 Fava 集成、不做 `bean-query`。
+实现方式：`beancount_writer.py` 提供 `read_entry(event_id, ledger_path)` → 扫描当年月的所有 `homebus-MM.bean` 文件，按 `homebus_event:` meta 字段匹配。不做 Fava 集成、不做 `bean-query`。
 
 v0.2 的完整查询（余额查询、账目查询、科目聚合）走 Fava REST API，届时 `operation` 扩展为 `balance`、`account_report` 等。
 
 | 操作 | 版本 | 查询方式 |
 |------|------|---------|
-| `verify_entry` | v0.1 | 文件扫描 `event:` meta |
+| `verify_entry` | v0.1 | 文件扫描 `homebus_event:` meta |
 | `balance` | v0.2 | Fava REST API |
 | `account_report` | v0.2 | Fava REST API |
 
@@ -335,7 +335,7 @@ Saga 补偿:
 |------|------|
 | 单元测试 | entry 文本生成（Adapter）、TOML 配置读写、幂等扫描逻辑 |
 | 集成测试 | 实际 `.bean` 文件追加 + `bean-check` 校验 |
-| 端到端 | `homebus beancount write` 完整流程（含 git commit） |
+| 端到端 | Beancount Adapter + Writer 完整链路（含 bean-check + git commit） |
 
 ## Asyncio 集成
 

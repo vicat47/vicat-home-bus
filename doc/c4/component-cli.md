@@ -63,21 +63,15 @@ Usage: homebus publish [OPTIONS]
 提交一个家庭事务事件。
 
 Options:
-  --intent TEXT      意图类型 (purchase/consume/sell/correct)  [required]
-  --items TEXT       物品列表 (JSON 格式)                       [required]
-  --total-price FLOAT  总金额 (元)                             [required]
-  --payment-account TEXT  支付账户 (默认: Assets:Alipay)
-  --event-id TEXT     自定义 event_id (可选，自动生成)
-  --wait             等待执行完成再返回 (可选，默认轮询)
-  --help             显示帮助信息
+  --body TEXT    完整 Event JSON                                   [required]
+  --file PATH    从文件读取 Event JSON（与 --body 二选一）
+  --api-url TEXT API Server 地址（默认从配置加载）
+  --help         显示帮助信息
 ```
 
 **Agent 调用示例：**
 ```bash
-homebus publish \
-  --intent purchase \
-  --items '[{"name":"牛奶","quantity":3,"category":"consumable","unit_price":20}]' \
-  --total-price 60.0
+homebus publish --body '{"intent":"purchase","items":[{"name":"牛奶","quantity":3,"category":"consumable","price":20}],"total_price":60}'
 ```
 
 ### query 命令

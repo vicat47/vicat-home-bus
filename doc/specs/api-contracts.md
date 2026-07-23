@@ -14,6 +14,7 @@ related:
   prd: "../prd/homebus-v0.1.md"
   event-types: "event-types.md"
   database-schema: "database-schema.md"
+  cli-spec: "cli-spec.md"
 ---
 
 # HomeBus API Contracts — Specification
@@ -111,7 +112,6 @@ class CreateEventRequest(BaseModel):
 | `items` 为空 | 400 |
 | `event_id` 格式非法 | 400 |
 | purchase 缺少 `total_price` | 400 |
-| **所有 items 必须同 category**（混合品类拒绝）| 400 |
 | `event_id` 已存在（幂等命中）| **200**（返回已有事件状态） |
 
 ### Response（正常创建）
@@ -119,7 +119,7 @@ class CreateEventRequest(BaseModel):
 ```json
 {
   "event_id": "evt_sess1_001",
-  "status": "pending",
+  "status": "accepted",
   "message": "事件已接收"
 }
 ```

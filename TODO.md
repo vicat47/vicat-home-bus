@@ -93,5 +93,5 @@
 - [ ] G-9: UTF-8 编码约束（显式声明）
 - [ ] G-10: routing-registry dispatch 伪代码补 Homebox 建模
 - [ ] G-11: `Liabilities:Unknown` 兜底账户初始化要求
-- [ ] G-13: `homebus.md` 标记 deprecated
-- [ ] PRD 模块清单补 `beancount_writer.py` + `registry.py`
+- [ ] G-13: `homebus.md` ✅ 已标记 Superseded
+- [ ] PRD 模块清单补 `beancount_writer.py` + `registry.py` ✅

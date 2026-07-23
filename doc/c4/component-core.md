@@ -9,6 +9,8 @@ related:
   specs: "../specs/homebus.md"
   routing-registry: "../specs/routing-registry.md"
   event-types: "../specs/event-types.md"
+  database-schema: "../specs/database-schema.md"
+  adapter-interfaces: "../specs/adapter-interfaces.md"
   roadmap: "../../ROADMAP.md"
 ---
 
@@ -122,7 +124,7 @@ graph TB
 | 属性 | 值 |
 |------|------|
 | **职责** | 将已验证的事件写入 events 表（不可变） |
-| **关键行为** | 先写入再响应（保证持久化）、status 初始为 `pending` |
+| **关键行为** | 先写入再响应（保证持久化）、status 初始为 `accepted` |
 | **数据库交互** | `INSERT INTO events` |
 
 ### 4. 调度引擎 (Dispatch Engine)
@@ -296,7 +298,7 @@ sequenceDiagram
     Val-->>API: schema OK / idempotent check
 
     API->>Wri: 持久化
-    Wri->>DB: INSERT INTO events (status=pending)
+    Wri->>DB: INSERT INTO events (status='accepted')
     DB-->>Wri: event_id
     Wri-->>API: accepted {event_id}
     API-->>CLI: {event_id, status: "accepted"}

@@ -12,7 +12,12 @@ related:
   radar: ""
 ---
 
-# HomeBus — 家庭服务总线规格说明
+- **Status**: Superseded
+- **Superseded by**: [event-types.md](event-types.md), [database-schema.md](database-schema.md), [adapter-interfaces.md](adapter-interfaces.md), [api-contracts.md](api-contracts.md), [beancount-integration.md](beancount-integration.md), [routing-registry.md](routing-registry.md), [config-paradigm.md](config-paradigm.md), [backend-boundaries.md](backend-boundaries.md)
+
+# HomeBus — 家庭服务总线规格说明（已废弃）
+
+> ⚠️ 本文档已由上述专项 spec 取代。保留作为早期架构背景参考，**具体设计以专项 spec 为准**。
 
 - **版本**: 0.1.0
 - **日期**: 2026-07-20

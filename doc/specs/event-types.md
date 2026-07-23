@@ -395,4 +395,4 @@ consume 事件:
 
 ## 多 item 约束
 
-purchase 事件中所有 `items` **必须属于同一 category**（全部 consumable 或全部 durable）。如需混合品类，Agent 应拆为两个独立的 purchase 事件。Validator 负责在校验阶段拒绝混合品类的事件。
+purchase 事件允许混合不同 category 的 items（如同时包含 consumable 和 durable）。Dispatch Engine 按 item 级别处理：Beancount 生成一条含多 posting 的分录（consumable→费用化，durable→资产化），Homebox 仅处理 durable items。详见 [adapter-interfaces.md](adapter-interfaces.md) 的 Dispatch 行为。
