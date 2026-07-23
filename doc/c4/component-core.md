@@ -245,19 +245,18 @@ class AdapterBase(ABC):
 
     @abstractmethod
     async def execute(self, action: str, params: dict) -> dict:
-        """执行一个操作。action 是枚举值，params 是操作参数。
-        返回 {success: bool, data: dict, error: str}"""
-        ...
-
-    @abstractmethod
-    async def query(self, operation: str, params: dict) -> dict:
-        """查询后端的特定资源（不写 executions）。
+        """执行一个操作（读或写，统一走 action catalog）。
         返回 {success: bool, data: dict, error: str}"""
         ...
 
     @abstractmethod
     async def health_check(self) -> dict:
         """检查后端连通性。返回 {healthy: bool, detail: str}"""
+        ...
+
+    @abstractmethod
+    def list_actions(self) -> list[ActionMeta]:
+        """返回此 adapter 支持的所有 action 元数据"""
         ...
 ```
 
