@@ -375,3 +375,29 @@ sequenceDiagram
     API-->>CLI: JSON
     CLI-->>Agent: "零食库存 12 件，本月花了 320 元"
 ```
+
+---
+
+## 组件 → 架构平面映射
+
+> 每个组件归属到一个或多个架构平面。平面定义详见 [architecture-planes.md](../specs/architecture-planes.md)。
+
+| 组件 | P1 写入 | P2 读 | P3 控制 | P4 数据 | P5 补偿 | P6 观测 | P7 调谐 | N1 路由 | N2 配置 |
+|------|:------:|:-----:|:------:|:------:|:------:|:------:|:------:|:------:|:------:|
+| Event Validator (1) | ● | | | | | | | | |
+| Event Writer (2) | ● | | | ● | | | | | |
+| Dispatch Engine (3) | ● | | | | | | | ● | |
+| Task Executor (4) | ● | | | | | | | | |
+| Grocy/Beancount/Homebox Adapter (5) | ● | ● | | | | | | | |
+| Saga Compensator (6) | | | | | ● | | | | |
+| Result Aggregator (7) | ● | | | | | | | | |
+| Query Router (8) | | ● | | | | | | | |
+| Routing Registry (9) | | | | | | | | ● | |
+| Adapter Interface (10) | ● | ● | | | | | | | |
+| CLI (ext) | | | ● | | | | | | |
+| Config Manager (ext) | | | ● | | | | | | ● |
+| Observation Engine (v0.2) | | | | | | ● | | | |
+| Reconciliation Engine (v0.3) | | | | | | | ● | | |
+
+- **●** = 核心归属
+- **ext** = 外部组件（在 component-cli.md / container.md 中建模）
