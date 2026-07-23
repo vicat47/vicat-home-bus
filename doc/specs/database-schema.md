@@ -53,7 +53,7 @@ CREATE TABLE IF NOT EXISTS events (
     event_id   TEXT PRIMARY KEY,
     intent     TEXT NOT NULL,
     payload    TEXT NOT NULL,     -- 完整 Event JSON（Pydantic model_dump_json）
-    status     TEXT NOT NULL DEFAULT 'pending',
+    status     TEXT NOT NULL DEFAULT 'accepted',
     created_at TEXT NOT NULL DEFAULT (datetime('now')),
     updated_at TEXT NOT NULL DEFAULT (datetime('now'))
 );
@@ -89,7 +89,7 @@ CREATE INDEX idx_executions_status ON executions(event_id, status);
 | `event_id` | TEXT | PK, NOT NULL | 格式: `evt_<session>_<seq>` |
 | `intent` | TEXT | NOT NULL | `purchase` / `consume` / `query` |
 | `payload` | TEXT | NOT NULL | 完整 Event JSON，extra fields 保留。v0.2 观测面通过宽表/物化视图索引常用字段 |
-| `status` | TEXT | NOT NULL, DEFAULT 'pending' | 状态机见 [event-types.md](event-types.md#事件状态机) |
+| `status` | TEXT | NOT NULL, DEFAULT 'accepted' | 状态机见 [event-types.md](event-types.md#事件状态机) |
 | `created_at` | TEXT | NOT NULL | ISO8601 或 datetime('now') |
 | `updated_at` | TEXT | NOT NULL | 每次状态变更时更新 |
 

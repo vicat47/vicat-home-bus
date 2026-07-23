@@ -261,11 +261,13 @@ Agent: homebus status --event-id <id>
 
 | 状态 | 含义 | 谁设置 |
 |------|------|--------|
-| `pending` | 已写入 events 表，等待后台调度 | Writer（`api.py`） |
+| `accepted` | API 已接收并持久化，等待后台调度 | Writer（`api.py`） |
 | `executing` | 后台开始执行子任务 | Dispatch（`dispatch.py`） |
 | `success` | 所有子任务成功 | Aggregator（`aggregator.py`） |
 | `compensated` | 部分失败已自动补偿回滚 | Aggregator（`aggregator.py`） |
 | `failed` | 执行失败且无法补偿 | Aggregator（`aggregator.py`） |
+
+> **语义区分**：`accepted` 是 API 层面的承诺（"我收下了"），`pending` 归 execution 级别使用（"子任务待执行"）。两个词在不同层级表达不同阶段的"等待"，避免混淆。
 
 ### 状态转换
 
@@ -278,10 +280,10 @@ Agent: homebus status --event-id <id>
        通过          不通过 → 400（不写 DB）
           │
           ▼
-    INSERT events (status=pending)
+    INSERT events (status='accepted')
           │
           ▼
-    API 响应 {event_id, status: "pending"}
+    API 响应 {event_id, status: "accepted"}
           │
           ▼  ← BackgroundTask 异步触发
     Dispatch 推导子任务
@@ -311,13 +313,13 @@ compensated failed
 
 | DB status | GET /v1/events/{id} 返回 | 说明 |
 |-----------|-------------------------|------|
-| `pending` | `{event_id, status: "pending"}` | Agent 需轮询等待 |
+| `accepted` | `{event_id, status: "accepted"}` | Agent 需轮询等待 |
 | `executing` | `{event_id, status: "executing"}` | Agent 需继续轮询 |
 | `success` | `{event_id, status: "success", executions: [...]}` | 终态 |
 | `compensated` | `{event_id, status: "compensated", executions: [...]}` | 终态 |
 | `failed` | `{event_id, status: "failed", executions: [...]}` | 终态 |
 
-> **注意**：API 响应中的 `status` 字段直接使用 DB 值，不翻译。之前部分文档使用 `"accepted"` 作为概念性描述，**已废弃**——统一使用 `"pending"`。DB initial value = `"pending"`，API response status = DB status。
+> API 响应中的 `status` 字段直接使用 DB 值，不翻译。幂等命中时额外返回 `duplicate: true` 便于 Agent 区分。
 
 ### 约束
 

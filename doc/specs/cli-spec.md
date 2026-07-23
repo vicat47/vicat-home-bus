@@ -54,7 +54,7 @@ homebus publish --file ./event.json
 输出：
 
 ```json
-{"event_id": "evt_sess1_001", "status": "pending", "message": "事件已接收"}
+{"event_id": "evt_sess1_001", "status": "accepted", "message": "事件已接收"}
 ```
 
 退出码：

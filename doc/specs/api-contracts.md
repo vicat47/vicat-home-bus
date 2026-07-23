@@ -129,7 +129,8 @@ class CreateEventRequest(BaseModel):
 ```json
 {
   "event_id": "evt_sess1_001",
-  "status": "success",
+  "status": "executing",
+  "duplicate": true,
   "message": "事件已存在（幂等命中）"
 }
 ```
@@ -151,7 +152,7 @@ class ExecutionItem(BaseModel):
 
 class EventStatusResponse(BaseModel):
     event_id: str
-    status: Literal["pending", "executing", "success", "compensated", "failed"]
+    status: Literal["accepted", "executing", "success", "compensated", "failed"]
     intent: str
     executions: list[ExecutionItem] = []
     created_at: str
