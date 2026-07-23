@@ -2,6 +2,7 @@ import type { Plugin } from "@opencode-ai/plugin"
 
 let sessionCounter = 0
 const CHECK_INTERVAL = 5
+const PLUGIN_NAME = 'doc-drift-hook'
 
 export const DocDriftHook: Plugin = async ({ client }) => {
   await client.app.log({
@@ -17,7 +18,7 @@ export const DocDriftHook: Plugin = async ({ client }) => {
             body: {
               service: "doc-drift-hook",
               level: "info",
-              message: `检测到 git commit 命令: ${cmd}`,
+              message: `[${PLUGIN_NAME}] 检测到 git commit 命令: ${cmd}`,
             },
           })
         }
@@ -25,13 +26,21 @@ export const DocDriftHook: Plugin = async ({ client }) => {
     },
 
     event: async ({ event }) => {
+      await client.app.log({
+        body: {
+          service: "doc-drift-hook",
+          level: "info",
+          message: `[${PLUGIN_NAME}] event hook called: ${event.type}`,
+        },
+      })
+
       if (event.type === "session.idle") {
         sessionCounter++
         await client.app.log({
           body: {
             service: "doc-drift-hook",
             level: "info",
-            message: `会话计数: ${sessionCounter}/${CHECK_INTERVAL}`,
+            message: `[${PLUGIN_NAME}] 会话计数: ${sessionCounter}/${CHECK_INTERVAL}`,
           },
         })
 
@@ -40,7 +49,7 @@ export const DocDriftHook: Plugin = async ({ client }) => {
             body: {
               service: "doc-drift-hook",
               level: "warn",
-              message: `已累计 ${CHECK_INTERVAL} 次空闲会话，自动触发文档漂移检查`,
+              message: `[${PLUGIN_NAME}] 已累计 ${CHECK_INTERVAL} 次空闲会话，自动触发文档漂移检查`,
             },
           })
 
@@ -63,7 +72,7 @@ export const DocDriftHook: Plugin = async ({ client }) => {
               body: {
                 service: "doc-drift-hook",
                 level: "info",
-                message: `已向会话 ${currentSession.id} 发送文档漂移检查指令`,
+                message: `[${PLUGIN_NAME}] 已向会话 ${currentSession.id} 发送文档漂移检查指令`,
               },
             })
           }
@@ -77,7 +86,7 @@ export const DocDriftHook: Plugin = async ({ client }) => {
           body: {
             service: "doc-drift-hook",
             level: "info",
-            message: `新会话开始，当前计数: ${sessionCounter}/${CHECK_INTERVAL}`,
+            message: `[${PLUGIN_NAME}] 新会话开始，当前计数: ${sessionCounter}/${CHECK_INTERVAL}`,
           },
         })
       }
