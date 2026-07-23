@@ -108,3 +108,18 @@ MVP 测试方案。
 
 - [ ] **git commit 钩子空转**：`tool.execute.before` 检测到 git commit 后只打 log，未调用 `client.session.promptAsync` 触发 drift check（与 `session.idle` 里的逻辑脱节）
 - [ ] **缺少文档写入事件监听**：当前只监听 `session.idle`（每 5 次空闲触发），缺少 `file.write` / `file.edit` 事件钩子。文档变更后无法立即感知，只能等 periodic 检查
+
+---
+
+## 🟢 Beancount 集成 spec 剩余 gap（来自 grill 审查）
+
+以下为 `beancount-integration.md` grill 审查后剩余的中低优先级 gap：
+
+- [ ] **G-6: 文件初始化行为** — `homebus-MM.bean` 首次创建时的目录建立、文件头模板、`main.bean` include 提示
+- [ ] **G-7: 文件锁细节** — `fcntl.flock` vs `.lock` 文件、超时值、死锁处理、Saga 回滚是否走锁
+- [ ] **G-8: bean-check 超时行为** — 超时时保留 entry 还是回滚？与 FR-8 的语义冲突
+- [ ] **G-9: UTF-8 编码约束** — 显式声明 `.bean` 文件读写强制 UTF-8
+- [ ] **G-10: routing-registry dispatch 伪代码** — 未建模 Homebox（durable 场景）和并行依赖关系
+- [ ] **G-11: Liabilities:Unknown 兜底账户** — `beancount-integration.md` 未提及该兜底账户，需补充初始化要求
+- [ ] **G-13: homebus.md 已过时** — 早期综合 spec 未随子 spec 同步更新，考虑标记 deprecated
+- [ ] **G-14: 混合品类 purchase 拆分** — consumable + durable 混合时 Beancount 分录如何分拆
