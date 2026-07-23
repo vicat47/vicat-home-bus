@@ -88,7 +88,7 @@ CREATE INDEX idx_executions_status ON executions(event_id, status);
 |------|------|------|------|
 | `event_id` | TEXT | PK, NOT NULL | 格式: `evt_<session>_<seq>` |
 | `intent` | TEXT | NOT NULL | `purchase` / `consume` / `query` |
-| `payload` | TEXT | NOT NULL | 完整 Event JSON，extra fields 保留 |
+| `payload` | TEXT | NOT NULL | 完整 Event JSON，extra fields 保留。v0.2 观测面通过宽表/物化视图索引常用字段 |
 | `status` | TEXT | NOT NULL, DEFAULT 'pending' | 状态机见 [event-types.md](event-types.md#事件状态机) |
 | `created_at` | TEXT | NOT NULL | ISO8601 或 datetime('now') |
 | `updated_at` | TEXT | NOT NULL | 每次状态变更时更新 |
@@ -187,7 +187,19 @@ await db.execute(
 
 ## Migration Plan
 
-v0.1 使用 `CREATE TABLE IF NOT EXISTS`，初次部署时 schema 固定。v0.2 引入版本检查（如 `schema_version` 表）+ Alembic 或手动 ALTER TABLE。
+使用 Flyway 式版本化迁移策略（适合不需要回滚的 SQLite 场景）：
+
+```
+homebus/
+  migrations/
+    V001__initial_schema.sql    ← CREATE TABLE events + executions
+    V002__add_index_xxx.sql     ← 未来增量变更
+```
+
+- **版本表**：`CREATE TABLE IF NOT EXISTS schema_version (version INTEGER PRIMARY KEY, applied_at TEXT NOT NULL DEFAULT (datetime('now')))`
+- **启动时检查**：查询 `schema_version` 表，按版本号升序执行所有未应用的 `V*.sql` 文件
+- **向后兼容**：新增字段用 `ALTER TABLE ADD COLUMN`（SQLite 3.25+ 支持），不修改或删除已有列
+- **不需要回滚**：SQLite 嵌入场景无需支持版本回退，只向前迁移
 
 ## Open Questions
 
