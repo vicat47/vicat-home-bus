@@ -351,12 +351,49 @@ Saga 补偿也走同样的 `adapter.execute()` 调用路径，不复用 Executor
 
 ```python
 # saga.py
-for subtask in reversed(completed_subtasks):
-    comp_action, comp_params = self._derive_compensation(subtask)
-    adapter = self.adapters[comp_action.service]
-    result = await adapter.execute(comp_action.action, comp_params)
-    # 记录为 is_compensation=1 的 execution
+
+COMPENSATION_MAP = {
+    ("grocy", "add_stock"): {
+        "action": "consume_stock",
+        "params": lambda original: {
+            **original["params"],
+            "items": [{**i, "quantity": -i["quantity"]} for i in original["params"]["items"]]
+        }
+    },
+    ("beancount", "record_expense"): {
+        "action": "delete_entry",
+        "params": lambda original: {
+            "event_id": original["params"]["event_id"]
+        }
+    },
+    ("homebox", "create_asset"): {
+        "action": "delete_asset",
+        "params": lambda original, result: {
+            "asset_id": result["data"]["asset_id"]
+        }
+    },
+}
+
+def _derive_compensation(subtask):
+    key = (subtask["service"], subtask["action"])
+    if key not in COMPENSATION_MAP:
+        raise UncompensatableError(key)
+    mapping = COMPENSATION_MAP[key]
+    params = mapping["params"](subtask["params"], subtask.get("result"))
+    return {"service": subtask["service"], "action": mapping["action"], "params": params}
 ```
+
+### 补偿语义的差异化
+
+三个后端的本质属性导致补偿语义不同：
+
+| 后端 | 补偿方式 | 语义 | 原因 |
+|------|---------|------|------|
+| Beancount | 删除 entry 行 | **undo** — 回到写入前状态 | `.bean` 文件允许物理删除 |
+| Grocy | 新增反向记录（`consume_stock(-N)`）| **reverse** — 新增抵消操作 | Grocy 是操作日志系统，add/consume 都是不可变记录 |
+| Homebox | DELETE 资产 | **undo** — 回到创建前状态 | REST API 允许物理删除 |
+
+> **Grocy 产品创建**：未来如果 Support 自动创建产品 + 入库，补偿时**不删除产品**——只扣减库存。Saga 补偿只还原"量变"（库存数量），不还原"质变"（产品是否存在）。删除产品会丢失用户手动附加的元数据（保质期、最低库存等）。
 
 ## Open Questions
 
