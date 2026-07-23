@@ -1,5 +1,8 @@
 ---
 status: draft
+priority: P0
+blocks:
+  - homebus/database.py
 created: 2026-07-23
 updated: 2026-07-23
 author: "vicat47"

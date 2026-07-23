@@ -15,6 +15,8 @@ specs/
 ├── beancount-integration.md # Beancount 集成方案
 ├── database-schema.md       # 数据库 Schema
 ├── adapter-interfaces.md    # Adapter 接口规范
+├── api-contracts.md         # API 契约
+├── cli-spec.md              # CLI 规范
 └── README.md               # 本文件
 ```
 
@@ -31,6 +33,8 @@ specs/
 | [beancount-integration.md](beancount-integration.md) | Beancount 集成方案 | draft | 2026-07-23 |
 | [database-schema.md](database-schema.md) | 数据库 Schema | draft | 2026-07-23 |
 | [adapter-interfaces.md](adapter-interfaces.md) | Adapter 接口规范 | draft | 2026-07-23 |
+| [api-contracts.md](api-contracts.md) | API 契约 | draft | 2026-07-23 |
+| [cli-spec.md](cli-spec.md) | CLI 规范 | draft | 2026-07-23 |
 
 ## 如何创建新规格
 

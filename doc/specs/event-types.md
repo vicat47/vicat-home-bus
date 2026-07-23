@@ -1,5 +1,12 @@
 ---
 status: approved
+priority: P0
+blocks:
+  - homebus/models.py
+  - homebus/dispatch.py
+  - homebus/executor.py
+  - homebus/aggregator.py
+  - homebus/validators.py
 created: 2026-07-20
 updated: 2026-07-20
 author: "vicat47"

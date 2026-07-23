@@ -1,5 +1,9 @@
 ---
 status: draft
+priority: P1
+blocks:
+  - homebus/adapters/beancount.py
+  - homebus/adapters/beancount_writer.py
 created: 2026-07-23
 updated: 2026-07-23
 author: "vicat47"
@@ -318,6 +322,96 @@ Saga 补偿:
 | 单元测试 | entry 文本生成（Adapter）、TOML 配置读写、幂等扫描逻辑 |
 | 集成测试 | 实际 `.bean` 文件追加 + `bean-check` 校验 |
 | 端到端 | `homebus beancount write` 完整流程（含 git commit） |
+
+## Asyncio 集成
+
+Beancount 写入链路包含同步阻塞操作（文件读写、`bean-check` 子进程、`git` 子进程）。为避免阻塞 FastAPI 事件循环：
+
+| 操作 | 实现方式 | 说明 |
+|------|---------|------|
+| 文件读写 | `asyncio.to_thread(open/read/write)` | 同步 I/O 在线程池执行 |
+| `bean-check` | `asyncio.create_subprocess_exec` + `asyncio.wait_for(timeout=10)` | 异步子进程，超时不阻塞 |
+| `git add/commit` | `asyncio.create_subprocess_exec` | 异步子进程，与 `bean-check` 串行（先 check 后 commit） |
+| 文件锁 | `asyncio.Lock`（应用层） | 保护同一 `homebus-MM.bean` 文件的并发写入，非 fcntl OS 锁 |
+
+```python
+# beancount_writer.py 核心调用模式
+
+import asyncio
+
+_writer_locks: dict[str, asyncio.Lock] = {}  # key: file_path
+
+async def write_entries(entries, ledger_path, date):
+    file_path = _build_file_path(ledger_path, date)
+    lock = _get_lock(file_path)
+
+    async with lock:
+        # 1. 幂等扫描（文件读，to_thread）
+        existing = await asyncio.to_thread(_scan_existing_events, file_path, entries)
+
+        # 2. 追加写入（文件写，to_thread）
+        await asyncio.to_thread(_append_entries, file_path, entries)
+
+        # 3. bean-check（异步子进程）
+        proc = await asyncio.create_subprocess_exec(
+            "bean-check", str(ledger_path),
+            stdout=asyncio.subprocess.PIPE,
+            stderr=asyncio.subprocess.PIPE,
+        )
+        try:
+            stdout, stderr = await asyncio.wait_for(proc.communicate(), timeout=10)
+        except asyncio.TimeoutError:
+            proc.kill()
+            await _rollback_entries(file_path, entries)
+            raise BeancountCheckTimeoutError()
+
+        if proc.returncode != 0:
+            await _rollback_entries(file_path, entries)
+            raise BeancountCheckError(stderr.decode())
+
+        # 4. git commit（异步子进程）
+        await _git_commit(ledger_path, file_path, entries)
+```
+
+### 依赖项
+
+不需要额外依赖——`asyncio.to_thread`（Python 3.9+）、`asyncio.create_subprocess_exec`、`asyncio.Lock` 均为标准库。
+
+## Idempotency Path
+
+两层幂等，events 表为权威：
+
+```
+POST /v1/events (event_id=evt_001)
+         │
+         ▼
+    Validator: SELECT FROM events WHERE event_id='evt_001'
+         │
+    ┌────┴────┐
+    ▼         ▼
+ 已存在     新事件
+    │         │
+    ▼         ▼
+ 200 +      INSERT → 继续执行
+已有状态        │
+                ▼
+        beancount_writer: 写入前扫描 homebus-MM.bean
+                │
+          检查 event: "evt_001" 是否已存在
+                │
+           ┌────┴────┐
+           ▼         ▼
+        已存在    未找到
+           │         │
+           ▼         ▼
+       告警日志   正常追加
+       不重复写
+```
+
+| 层级 | 权威性 | 行为 |
+|------|--------|------|
+| events 表 | **权威源** | 命中去重 → 直接返回。INSERT 冲突触发 `sqlite3.IntegrityError` |
+| .bean 文件 | **防御层** | 发现不一致 → 记录 WARN 日志 + 不静默跳过，等待人工排查 |
 
 ## Open Questions
 

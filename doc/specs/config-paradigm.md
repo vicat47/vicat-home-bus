@@ -1,5 +1,8 @@
 ---
 status: draft
+priority: P1
+blocks:
+  - homebus/config.py
 created: 2026-07-20
 updated: 2026-07-20
 author: "vicat47"

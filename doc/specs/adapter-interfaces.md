@@ -1,5 +1,13 @@
 ---
 status: draft
+priority: P0
+blocks:
+  - homebus/adapters/base.py
+  - homebus/adapters/grocy.py
+  - homebus/adapters/beancount.py
+  - homebus/adapters/homebox.py
+  - homebus/executor.py
+  - homebus/saga.py
 created: 2026-07-23
 updated: 2026-07-23
 author: "vicat47"
