@@ -1,0 +1,33 @@
+services:
+  homebus:
+    build: .
+    ports:
+      - "8080:8080"
+    environment:
+      HOMEBUS_DB_PATH: /data/homebus.db
+      GROCY_API_URL: ${GROCY_API_URL:-http://grocy:9283}
+      GROCY_API_KEY: ${GROCY_API_KEY:-}
+      HOMEBOX_API_URL: ${HOMEBOX_API_URL:-http://homebox:7745}
+      HOMEBOX_TOKEN: ${HOMEBOX_TOKEN:-}
+      BEANCOUNT_LEDGER_PATH: ${BEANCOUNT_LEDGER_PATH:-/ledger}
+      HOMEBUS_HOST: "0.0.0.0"
+      HOMEBUS_PORT: "8080"
+    volumes:
+      - homebus-data:/data
+      - ${BEANCOUNT_LEDGER_PATH:-~/ledger}:/ledger:ro
+    restart: unless-stopped
+
+  grocy-mock:
+    image: alpine:latest
+    command: "echo 'Grocy mock placeholder'"
+    profiles:
+      - mock
+
+  homebox-mock:
+    image: alpine:latest
+    command: "echo 'Homebox mock placeholder'"
+    profiles:
+      - mock
+
+volumes:
+  homebus-data:

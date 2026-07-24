@@ -17,4 +17,13 @@ dependencies = [
 [project.scripts]
 homebus = "cli.homebus:main"
 
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+
 [tool.uv.sources]
+
+[dependency-groups]
+dev = [
+    "pytest>=9.1.1",
+    "pytest-asyncio>=1.4.0",
+]
