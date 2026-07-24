@@ -1,0 +1,20 @@
+schema: spec-driven
+name: mvp-dev
+description: "HomeBus v0.1 MVP — 核心引擎 + CLI + 3 后端适配器 + Saga 补偿"
+created: 2026-07-24
+status: proposed
+artifacts:
+  - id: proposal
+    output: proposal.md
+    status: done
+    dependencies: []
+  - id: design
+    output: design.md
+    status: done
+    dependencies: [proposal]
+  - id: tasks
+    output: tasks.md
+    status: done
+    dependencies: [design]
+apply:
+  requires: [tasks]
